@@ -78,6 +78,8 @@ class DriverNode(rclpy.node.Node):
 
         # Current commanded target {joint_name: value} (radians, gripper: 0-100)
         self._target_positions: dict[str, float] = {}
+        self._target_gripper_effort = None
+        self._effort_fallback_reported = False
 
         # Bridge for ROS Image messages
         self._cv_bridge = CvBridge()
@@ -108,7 +110,10 @@ class DriverNode(rclpy.node.Node):
     def _connect_arm(self, port: str = DEFAULT_PORT) -> SO101Sim | SO101Follower:
         """Creates and connects the backend chosen by use_sim (provided)."""
         if self._use_sim:
-            robot = SO101Sim()
+            # Only the 50Hz control timer advances physics. Publishing an image
+            # or reading joint feedback must not change simulation speed.
+            seed = self.declare_parameter("sim_seed", -1).value
+            robot = SO101Sim(sim_dt_per_step=0, seed=seed if seed >= 0 else None)
             robot.connect()
             return robot
 
@@ -145,8 +150,15 @@ class DriverNode(rclpy.node.Node):
         Arm joints in radians, gripper in 0-100%. Clamps to joint limits.
         """
         with self._lock:
+            if "gripper" in msg.name:
+                i = list(msg.name).index("gripper")
+                effort = msg.effort[i] if i < len(msg.effort) else 0.
+                self._target_gripper_effort = float(effort) if np.isfinite(effort) and effort < 0 else None
+                if self._target_gripper_effort is not None and not self._use_sim and not self._effort_fallback_reported:
+                    self.get_logger().warn("UNSUPPORTED_CAPABILITY: calibrated gripper effort control; using the bounded position fallback")
+                    self._effort_fallback_reported = True
             for name, pos in zip(msg.name, msg.position):
-                if name not in JOINT_NAMES:
+                if name not in JOINT_NAMES or not np.isfinite(pos):
                     continue
                 if name == "gripper":
                     clamped = float(np.clip(pos, 0.0, 100.0))
@@ -159,12 +171,13 @@ class DriverNode(rclpy.node.Node):
         """Service callback: sets the 6 joints at once.
         Units: degrees for the 5 arm joints, 0-100 (%) for the gripper.
         """
-        if len(request.positions) != 6:
+        if len(request.positions) != 6 or not np.all(np.isfinite(request.positions)):
             response.success = False
             response.message = f"Expected 6 joint positions, got {len(request.positions)}"
             return response
 
         with self._lock:
+            self._target_gripper_effort = None
             for idx, name in enumerate(JOINT_NAMES):
                 val = request.positions[idx]
                 if name == "gripper":
@@ -181,12 +194,17 @@ class DriverNode(rclpy.node.Node):
     def _control_step(self):
         """Periodic control loop: sends active target positions to backend."""
         with self._lock:
-            if not self._target_positions or not self._robot.is_connected:
+            if not self._robot.is_connected:
                 return
             action = {f"{k}.pos": v for k, v in self._target_positions.items()}
+            gripper_effort = self._target_gripper_effort
 
         try:
-            self._robot.send_action(action)
+            if action:
+                self._robot.send_action(action)
+            if self._use_sim:
+                self._robot.set_gripper_effort(gripper_effort)
+                self._robot.advance(1.0 / CONTROL_HZ)
         except Exception as e:
             self.get_logger().error(f"Error in send_action: {e}")
 
@@ -205,8 +223,11 @@ class DriverNode(rclpy.node.Node):
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.name = JOINT_NAMES
         positions = []
+        if not all(f"{name}.pos" in obs and np.isfinite(obs[f"{name}.pos"]) for name in JOINT_NAMES):
+            self.get_logger().error("Incomplete/nonfinite joint observation; feedback not published")
+            return
         for name in JOINT_NAMES:
-            raw_val = obs.get(f"{name}.pos", 0.0)
+            raw_val = obs[f"{name}.pos"]
             if name == "gripper":
                 # Backend observation gives 0-100 for gripper.
                 # /joint_states for robot_state_publisher must be in radians!
@@ -216,6 +237,9 @@ class DriverNode(rclpy.node.Node):
                 positions.append(float(raw_val))
 
         msg.position = positions
+        # Never label raw servo load/current as Nm without calibration.
+        if all(f"{name}.effort" in obs for name in JOINT_NAMES):
+            msg.effort = [float(obs[f"{name}.effort"]) for name in JOINT_NAMES]
         self._pub_joint_states.publish(msg)
 
     def _publish_camera(self):

@@ -15,7 +15,7 @@ from pathlib import Path
 import mujoco
 import numpy as np
 
-ASSETS_DIR = Path("/opt/so101/sim/so101_sim/assets/so101")
+ASSETS_DIR = Path(__file__).resolve().parent / "assets/so101"
 DEFAULT_SCENE = ASSETS_DIR / "scene_tek5.xml"
 
 ARM_JOINTS = ["shoulder_pan", "shoulder_lift", "elbow_flex", "wrist_flex", "wrist_roll"]
@@ -50,6 +50,7 @@ class SO101Sim:
         self._renderer: mujoco.Renderer | None = None
         self._connected = False
         self._last_step_t = 0.0
+        self._gripper_effort_target = None
 
     # ------------------------------------------------------------------ API
 
@@ -69,6 +70,9 @@ class SO101Sim:
         }
         g_jnt = self.model.joint(GRIPPER)
         self._gripper_range = (float(g_jnt.range[0]), float(g_jnt.range[1]))
+        self._arm_targets = {name: float(self.data.ctrl[self._actuator_id[name]]) for name in ARM_JOINTS}
+        self._gripper_position_target = float(self.data.ctrl[self._actuator_id[GRIPPER]])
+        self._reference_velocity = dict.fromkeys(ALL_JOINTS, 0.)
 
         mujoco.mj_forward(self.model, self.data)
         self.randomize_object()
@@ -94,6 +98,10 @@ class SO101Sim:
         obs[f"{GRIPPER}.pos"] = self._gripper_rad_to_pct(
             self.data.qpos[self._joint_qpos_adr[GRIPPER]]
         )
+        for name in ALL_JOINTS:
+            # Hinge actuator force is joint torque (Nm), a motor observation,
+            # not an object/contact oracle. Real backends may omit this key.
+            obs[f"{name}.effort"] = float(self.data.actuator_force[self._actuator_id[name]])
         return obs
 
     def send_action(self, action: dict) -> dict:
@@ -106,9 +114,9 @@ class SO101Sim:
                 continue
             if name == GRIPPER:
                 target = self._gripper_pct_to_rad(val)
+                self._gripper_position_target = target
             else:
-                target = val
-            self.data.ctrl[self._actuator_id[name]] = target
+                self._arm_targets[name] = float(val)
             applied[key] = val
         self._step_sim()
         return applied
@@ -162,8 +170,8 @@ class SO101Sim:
         fx = fy  # square pixels
         return np.array(
             [
-                [fx, 0, self.camera_width / 2],
-                [0, fy, self.camera_height / 2],
+                [fx, 0, (self.camera_width - 1) / 2],
+                [0, fy, (self.camera_height - 1) / 2],
                 [0, 0, 1],
             ]
         )
@@ -172,7 +180,59 @@ class SO101Sim:
 
     def _step_sim(self) -> None:
         for _ in range(self.sim_dt_per_step):
-            mujoco.mj_step(self.model, self.data)
+            self.step_once()
+
+    def set_gripper_effort(self, torque: float | None) -> None:
+        """Optional hybrid motor command. Does not modify actuator physics.
+
+        Existing position-servo gains convert the requested closing torque
+        into a position reference each physics tick. The original ctrlrange
+        and forcerange still apply. No object/contact state is consulted.
+        """
+        if torque is not None and (not np.isfinite(torque) or torque > 0):
+            raise ValueError("Gripper effort must be a finite closing torque")
+        if self._gripper_effort_target is not None and torque is None:
+            self.data.ctrl[self._actuator_id[GRIPPER]] = self.data.qpos[self._joint_qpos_adr[GRIPPER]]
+            self._reference_velocity[GRIPPER] = float(self.data.qvel[self.model.joint(GRIPPER).dofadr[0]])
+        self._gripper_effort_target = torque
+
+    def step_once(self) -> None:
+        # Interpolate incoming position samples at the motor tick. The gains
+        # and force limits stay unchanged; acceleration limits belong to the
+        # command trajectory, avoiding impulses from 20Hz stair-step targets.
+        dt = self.model.opt.timestep
+        for name in ALL_JOINTS:
+            if name == GRIPPER and self._gripper_effort_target is not None:
+                continue
+            actuator = self._actuator_id[name]
+            goal = self._gripper_position_target if name == GRIPPER else self._arm_targets[name]
+            maximum_velocity, acceleration = (.6, 1.2) if name == GRIPPER else (.5, .8)
+            error = goal - self.data.ctrl[actuator]
+            desired_velocity = np.sign(error) * min(maximum_velocity, np.sqrt(2 * acceleration * abs(error)))
+            velocity = self._reference_velocity[name] + np.clip(desired_velocity - self._reference_velocity[name], -acceleration * dt, acceleration * dt)
+            increment = velocity * dt
+            if abs(increment) >= abs(error):
+                self.data.ctrl[actuator] = goal
+                self._reference_velocity[name] = 0.
+            else:
+                self.data.ctrl[actuator] += increment
+                self._reference_velocity[name] = velocity
+        if self._gripper_effort_target is not None:
+            actuator = self._actuator_id[GRIPPER]
+            address = self._joint_qpos_adr[GRIPPER]
+            dof = self.model.joint(GRIPPER).dofadr[0]
+            kp = self.model.actuator_gainprm[actuator, 0]
+            kv = -self.model.actuator_biasprm[actuator, 2]
+            reference = self.data.qpos[address] + (self._gripper_effort_target + kv * self.data.qvel[dof]) / kp
+            self.data.ctrl[actuator] = np.clip(reference, *self.model.actuator_ctrlrange[actuator])
+        mujoco.mj_step(self.model, self.data)
+
+    def advance(self, seconds: float) -> None:
+        """Advance from the driver's control clock, independently of sensor reads."""
+        if not np.isfinite(seconds) or seconds < 0:
+            raise ValueError("Expected a finite nonnegative simulation duration")
+        for _ in range(round(seconds / self.model.opt.timestep)):
+            self.step_once()
 
     def _gripper_pct_to_rad(self, pct: float) -> float:
         lo, hi = self._gripper_range

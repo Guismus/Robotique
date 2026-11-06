@@ -1,251 +1,158 @@
 #!/usr/bin/env python3
-"""perception_node.py — 3D object and drop box detection from external camera.
-
-Subscribes to:
-  - /external_cam/image_raw (sensor_msgs/Image)
-  - /external_cam/camera_info (sensor_msgs/CameraInfo)
-
-Publishes:
-  - /object_position (geometry_msgs/PoseStamped)
-  - /ball_position (geometry_msgs/PoseStamped, alias for compatibility)
-  - /drop_box_position (geometry_msgs/PoseStamped)
-  - /perception/mask (sensor_msgs/Image, segmentation mask for visualization)
-"""
+"""Camera-only object/box poses, with source timestamps and bounded validity."""
 import threading
-
 import cv2
 import numpy as np
 import rclpy
-import rclpy.node
+from scipy.spatial.transform import Rotation
+from rclpy.node import Node
+from rclpy.executors import ExternalShutdownException
 from cv_bridge import CvBridge
 from geometry_msgs.msg import PoseStamped
-from sensor_msgs.msg import CameraInfo, Image
-
-# Known height of the cube center above the table (z=0.025 m)
-OBJECT_Z_TABLE = 0.025
-DROP_BOX_Z_TABLE = 0.0125
-
-# Fixed camera pose in world frame from scene_tek5.xml
-# pos="0.45 0.45 0.55" xyaxes="-0.707 0.707 0 -0.354 -0.354 0.866"
-DEFAULT_CAM_POS = np.array([0.45, 0.45, 0.55])
-# MuJoCo xyaxes defines camera local frame (x_right, y_up, z_back).
-# Standard pinhole CV frame has (x_right, y_down, z_forward).
-# R_cv = [x_mj, -y_mj, -z_mj]
-_R_MJ = np.array([
-    [-0.70710678, -0.35389597, 0.61217452],
-    [0.70710678, -0.35389597, 0.61217452],
-    [0.0, 0.86574551, 0.50048448],
-])
-DEFAULT_R_CV = np.column_stack([_R_MJ[:, 0], -_R_MJ[:, 1], -_R_MJ[:, 2]])
+from sensor_msgs.msg import CameraInfo, Image, JointState
+from .vision import CAM_POS, R_CV, detect_cube, detect_box
+from .occlusion import gripper_depth
 
 
-class PerceptionNode(rclpy.node.Node):
-    """Detects the red cube and drop box, publishing 3D poses in world/robot frame."""
-
+class PerceptionNode(Node):
     def __init__(self):
         super().__init__("so101_perception")
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
         self._cv_bridge = CvBridge()
-
-        # Intrinsic matrix K (3x3)
-        self._K: np.ndarray | None = None
-        self._cam_pos: np.ndarray = DEFAULT_CAM_POS.copy()
-        self._R_cv: np.ndarray = DEFAULT_R_CV.copy()
-
-        # Last detected positions
-        self._last_obj_pos: np.ndarray | None = None
-        self._last_box_pos: np.ndarray | None = None
-
-        # Subscribers
-        self._sub_camera_info = self.create_subscription(
-            CameraInfo, "/external_cam/camera_info", self._cb_camera_info, 10
-        )
-        self._sub_image = self.create_subscription(
-            Image, "/external_cam/image_raw", self._cb_image, 10
-        )
-
-        # Publishers
+        self._K = None
+        self._cube = None
+        self._last_obj_pos = self._last_box_pos = None
+        self._obj_stamp = self._box_stamp = None
+        self._tracking_cube = None
+        self._tracking_stamp = -np.inf
+        self._last_image_stamp = -np.inf
+        self._table_prior = True
+        self._was_open = False
+        self._gripper_is_open = False
+        self._box_support_count = 0
+        self._last_supported_pose = None
+        self._ee_position = None
+        self._ee_rotation = np.eye(3)
+        self._gripper_angle = 0.
+        self._ee_stamp = -np.inf
+        self._table_support_count = 0
+        self._last_table_pose = None
+        self._cam_pos = np.array(self.declare_parameter("camera_position", CAM_POS.tolist()).value)
+        self._R_cv = np.array(self.declare_parameter("camera_rotation_cv", R_CV.ravel().tolist()).value).reshape(3, 3)
+        # Static fixture calibration from scene_tek5.xml, gated by actual images.
+        self._calibrated_box = np.array(self.declare_parameter("drop_box_center", [.05, -.25, .025]).value)
+        self.create_subscription(CameraInfo, "/external_cam/camera_info", self._cb_camera_info, 10)
+        self.create_subscription(Image, "/external_cam/image_raw", self._cb_image, 2)
+        self.create_subscription(JointState, "/joint_states", self._cb_joints, 10)
+        self.create_subscription(PoseStamped, "/end_effector_pose", self._cb_end_effector, 10)
         self._pub_obj_pose = self.create_publisher(PoseStamped, "/object_position", 10)
         self._pub_ball_pose = self.create_publisher(PoseStamped, "/ball_position", 10)
         self._pub_box_pose = self.create_publisher(PoseStamped, "/drop_box_position", 10)
-        self._pub_mask = self.create_publisher(Image, "/perception/mask", 10)
+        self._pub_mask = self.create_publisher(Image, "/perception/mask", 2)
+        self.create_timer(.1, self._publish_positions)
 
-        # Timer to publish latest positions steadily at 10 Hz even if camera frames arrive slower
-        self._timer_pub = self.create_timer(0.1, self._publish_positions)
+    def _cb_camera_info(self, msg):
+        matrix = np.array(msg.k).reshape(3, 3)
+        if np.all(np.isfinite(matrix)) and matrix[0, 0] > 0 and matrix[1, 1] > 0:
+            with self._lock:
+                self._K = matrix
 
-        self.get_logger().info("Perception node ready.")
+    def _cb_joints(self, msg):
+        values = dict(zip(msg.name, msg.position))
+        angle = values.get("gripper")
+        if angle is not None and np.isfinite(angle):
+            self._gripper_angle = float(angle)
+            self._gripper_is_open = angle > .8
+            self._was_open |= angle > .8
+            if self._was_open and angle < .78:
+                # The initial object rests on the table. Once grasping starts,
+                # estimate height from known size, including after release.
+                self._table_prior = False
 
-    def _cb_camera_info(self, msg: CameraInfo):
-        """Update intrinsics from CameraInfo."""
-        with self._lock:
-            if self._K is None and len(msg.k) == 9:
-                self._K = np.array(msg.k).reshape(3, 3)
-                self.get_logger().info(f"Received camera intrinsics K:\n{self._K}")
+    def _cb_end_effector(self, msg):
+        if msg.header.frame_id == "world":
+            position = np.array([msg.pose.position.x, msg.pose.position.y, msg.pose.position.z])
+            if np.all(np.isfinite(position)):
+                self._ee_position = position
+                quaternion = [msg.pose.orientation.x, msg.pose.orientation.y, msg.pose.orientation.z, msg.pose.orientation.w]
+                if np.linalg.norm(quaternion) > .99:
+                    self._ee_rotation = Rotation.from_quat(quaternion).as_matrix()
+                self._ee_stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
 
-    def _cb_image(self, msg: Image):
-        """Process incoming camera frame: segment objects and project to 3D."""
-        try:
-            # Handle encoding
-            if msg.encoding in ("rgb8", "bgr8"):
-                frame = self._cv_bridge.imgmsg_to_cv2(msg, desired_encoding="rgb8")
-            else:
-                frame = self._cv_bridge.imgmsg_to_cv2(msg, desired_encoding="passthrough")
-                if len(frame.shape) == 2:
-                    frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
-                elif frame.shape[2] == 3 and msg.encoding.startswith("bgr"):
-                    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        except Exception as e:
-            self.get_logger().error(f"Error converting image: {e}")
+    def _cb_image(self, msg):
+        if self._K is None:
             return
-
-        with self._lock:
-            if self._K is None:
-                # Default K if camera_info not yet received
-                fovy = np.radians(52.0)
-                fy = frame.shape[0] / (2.0 * np.tan(fovy / 2.0))
-                fx = fy
-                self._K = np.array([
-                    [fx, 0.0, frame.shape[1] / 2.0],
-                    [0.0, fy, frame.shape[0] / 2.0],
-                    [0.0, 0.0, 1.0],
-                ])
-
-        obj_uv, box_uv, mask_viz = self._detect_objects(frame)
-
-        # Publish mask visualization
         try:
-            mask_msg = self._cv_bridge.cv2_to_imgmsg(mask_viz, encoding="rgb8")
-            mask_msg.header.stamp = msg.header.stamp
-            mask_msg.header.frame_id = "external_cam"
-            self._pub_mask.publish(mask_msg)
-        except Exception as e:
-            self.get_logger().warn(f"Failed to publish mask: {e}")
-
-        # 3D Projection
+            image = self._cv_bridge.imgmsg_to_cv2(msg, desired_encoding="rgb8")
+        except Exception as error:
+            self.get_logger().warn(f"Image conversion failed: {error}")
+            return
         with self._lock:
-            if obj_uv is not None:
-                p_3d = self._project_to_3d(obj_uv[0], obj_uv[1], target_z=OBJECT_Z_TABLE)
-                # Ignore detections outside the reachable table workspace (radius > 0.40m or z < 0)
-                r_dist = float(np.linalg.norm(p_3d[:2]))
-                if 0.10 <= r_dist <= 0.38:
-                    self._last_obj_pos = p_3d
+            # Discard old images instead of turning a queued frame into a new target.
+            stamp = msg.header.stamp.sec + msg.header.stamp.nanosec * 1e-9
+            now = self.get_clock().now().nanoseconds * 1e-9
+            if stamp <= self._last_image_stamp or stamp <= 0 or not -.05 <= now - stamp <= .6:
+                return
+            self._last_image_stamp = stamp
+            prior = self._tracking_cube if now - self._tracking_stamp < .6 else None
+            tcp = self._ee_position if not self._gripper_is_open and self._ee_position is not None and self._ee_position[2] > .075 and now - self._ee_stamp < .3 else None
+            robot_depth = gripper_depth(image.shape, self._K, self._cam_pos, self._R_cv, self._ee_position, self._ee_rotation, self._gripper_angle) if self._ee_position is not None and now - self._ee_stamp < .3 else None
+            pose, mask = detect_cube(image, self._K, prior, self._cam_pos, self._R_cv, .025 if self._table_prior else None, self._calibrated_box, tcp, robot_depth)
+            near_box = prior is not None and np.linalg.norm(prior.position[:2] - self._calibrated_box[:2]) < .1
+            if self._gripper_is_open and not self._table_prior and not near_box:
+                on_table, _ = detect_cube(image, self._K, cam_pos=self._cam_pos, rotation=self._R_cv,
+                    table_height=.025, occlusion_box=self._calibrated_box)
+                stable_table = on_table is not None and self._last_table_pose is not None and np.linalg.norm(on_table.position - self._last_table_pose) < .004
+                self._table_support_count = self._table_support_count + 1 if stable_table else (1 if on_table else 0)
+                self._last_table_pose = on_table.position.copy() if on_table else None
+                if self._table_support_count >= 3:
+                    self._table_prior, pose = True, on_table
+            if self._gripper_is_open and near_box and not self._table_prior:
+                # A support-plane hypothesis must fit the visible red cap; an
+                # open gripper alone never confirms delivery. Wall occlusion
+                # is modelled explicitly, including for the reprojection test.
+                supported, _ = detect_cube(image, self._K, cam_pos=self._cam_pos, rotation=self._R_cv,
+                    table_height=self._calibrated_box[2] + .004, occlusion_box=self._calibrated_box)
+                half_width = .025 * (abs(np.cos(supported.yaw)) + abs(np.sin(supported.yaw))) if supported else np.inf
+                inside = supported is not None and np.all(np.abs(supported.position[:2] - self._calibrated_box[:2]) + half_width <= .048)
+                stable = inside and self._last_supported_pose is not None and np.linalg.norm(supported.position - self._last_supported_pose) < .004
+                self._box_support_count = self._box_support_count + 1 if stable else (1 if inside else 0)
+                self._last_supported_pose = supported.position.copy() if inside else None
+                if self._box_support_count >= 3:
+                    pose = supported
+            if pose:
+                self._tracking_cube, self._tracking_stamp = pose, stamp
+            self._last_obj_pos = pose.position.copy() if pose else None
+            self._cube = pose
+            self._obj_stamp = msg.header.stamp if pose else None
+            self._last_box_pos = detect_box(image, self._K, self._cam_pos, self._R_cv, self._calibrated_box)
+            self._box_stamp = msg.header.stamp if self._last_box_pos is not None else None
+        mask_msg = self._cv_bridge.cv2_to_imgmsg(cv2.cvtColor(mask, cv2.COLOR_GRAY2RGB), encoding="rgb8")
+        mask_msg.header = msg.header
+        self._pub_mask.publish(mask_msg)
 
-            if box_uv is not None:
-                p_box_3d = self._project_to_3d(box_uv[0], box_uv[1], target_z=DROP_BOX_Z_TABLE)
-                self._last_box_pos = p_box_3d
-
-    def _detect_objects(self, rgb_image: np.ndarray) -> tuple[tuple[float, float] | None, tuple[float, float] | None, np.ndarray]:
-        """Detect the red cube and brown drop box in HSV color space."""
-        hsv = cv2.cvtColor(rgb_image, cv2.COLOR_RGB2HSV)
-
-        # 1. Red cube segmentation: red wraps around hue 0/180
-        mask_red1 = cv2.inRange(hsv, np.array([0, 120, 70], dtype=np.uint8), np.array([12, 255, 255], dtype=np.uint8))
-        mask_red2 = cv2.inRange(hsv, np.array([160, 120, 70], dtype=np.uint8), np.array([180, 255, 255], dtype=np.uint8))
-        mask_cube = mask_red1 | mask_red2
-
-        # Ignore pixels on the immediate edge of the image frame (avoid edge artifacts)
-        mask_cube[:8, :] = 0
-        mask_cube[-8:, :] = 0
-        mask_cube[:, :8] = 0
-        mask_cube[:, -8:] = 0
-
-        # 2. Brown box segmentation (Hue around 35-75, Saturation 40-180, Value 20-120)
-        mask_box = cv2.inRange(hsv, np.array([35, 40, 20], dtype=np.uint8), np.array([75, 180, 120], dtype=np.uint8))
-
-        # Find centroid of cube
-        cube_uv = None
-        contours, _ = cv2.findContours(mask_cube, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        if contours:
-            # Filter contours by area: true cube has area between 100 and 1500 px
-            valid_contours = [c for c in contours if 50 < cv2.contourArea(c) < 3000]
-            if valid_contours:
-                largest = max(valid_contours, key=cv2.contourArea)
-                M = cv2.moments(largest)
-                if M["m00"] > 0:
-                    cube_uv = (M["m10"] / M["m00"], M["m01"] / M["m00"])
-
-        # Find centroid of box
-        box_uv = None
-        contours_b, _ = cv2.findContours(mask_box, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        if contours_b:
-            largest_b = max(contours_b, key=cv2.contourArea)
-            if cv2.contourArea(largest_b) > 40:
-                M_b = cv2.moments(largest_b)
-                if M_b["m00"] > 0:
-                    box_uv = (M_b["m10"] / M_b["m00"], M_b["m01"] / M_b["m00"])
-
-        # Create visualization mask
-        mask_viz = cv2.cvtColor(mask_cube, cv2.COLOR_GRAY2RGB)
-        if cube_uv is not None:
-            cv2.circle(mask_viz, (int(round(cube_uv[0])), int(round(cube_uv[1]))), 5, (0, 255, 0), -1)
-            cv2.putText(mask_viz, "cube", (int(cube_uv[0]) + 7, int(cube_uv[1])),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 0), 1)
-
-        if box_uv is not None:
-            cv2.circle(mask_viz, (int(round(box_uv[0])), int(round(box_uv[1]))), 5, (255, 255, 0), -1)
-            cv2.putText(mask_viz, "box", (int(box_uv[0]) + 7, int(box_uv[1])),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 0), 1)
-
-        return cube_uv, box_uv, mask_viz
-
-    def _project_to_3d(self, u: float, v: float, target_z: float) -> np.ndarray:
-        """Projects a 2D image pixel (u, v) into 3D world coordinates by intersecting
-        the optical ray with the horizontal plane z = target_z.
-        """
-        # Ray direction in camera pinhole coordinate frame
-        ray_cv = np.linalg.inv(self._K) @ np.array([u, v, 1.0])
-        ray_cv = ray_cv / np.linalg.norm(ray_cv)
-
-        # Ray direction in world frame
-        ray_world = self._R_cv @ ray_cv
-
-        # Intersection with plane z = target_z
-        # Point on ray: p(t) = cam_pos + t * ray_world
-        # cam_pos[2] + t * ray_world[2] = target_z
-        if abs(ray_world[2]) < 1e-6:
-            return np.array([0.0, 0.0, target_z])
-
-        t = (target_z - self._cam_pos[2]) / ray_world[2]
-        return self._cam_pos + t * ray_world
+    def _pose(self, position, stamp, yaw=0., roll=0., pitch=0.):
+        if position is None or stamp is None:
+            return None
+        age = self.get_clock().now().nanoseconds * 1e-9 - (stamp.sec + stamp.nanosec * 1e-9)
+        if not -.05 <= age <= .6:
+            return None
+        msg = PoseStamped()
+        msg.header.stamp, msg.header.frame_id = stamp, "world"
+        msg.pose.position.x, msg.pose.position.y, msg.pose.position.z = map(float, position)
+        quaternion = Rotation.from_euler("xyz", [roll, pitch, yaw]).as_quat()
+        msg.pose.orientation.x, msg.pose.orientation.y, msg.pose.orientation.z, msg.pose.orientation.w = map(float, quaternion)
+        return msg
 
     def _publish_positions(self):
-        """Publish PoseStamped for object and drop box."""
-        now = self.get_clock().now().to_msg()
-
         with self._lock:
-            obj_pos = self._last_obj_pos.copy() if self._last_obj_pos is not None else None
-            box_pos = self._last_box_pos.copy() if self._last_box_pos is not None else None
-
-        if obj_pos is not None:
-            msg = PoseStamped()
-            msg.header.stamp = now
-            msg.header.frame_id = "world"
-            msg.pose.position.x = float(obj_pos[0])
-            msg.pose.position.y = float(obj_pos[1])
-            msg.pose.position.z = float(obj_pos[2])
-            msg.pose.orientation.w = 1.0
-            self._pub_obj_pose.publish(msg)
-            self._pub_ball_pose.publish(msg)
-
-        if box_pos is not None:
-            msg = PoseStamped()
-            msg.header.stamp = now
-            msg.header.frame_id = "world"
-            msg.pose.position.x = float(box_pos[0])
-            msg.pose.position.y = float(box_pos[1])
-            msg.pose.position.z = float(box_pos[2])
-            msg.pose.orientation.w = 1.0
-            self._pub_box_pose.publish(msg)
-        else:
-            # Fallback to default known drop_box position from scene_tek5.xml
-            msg = PoseStamped()
-            msg.header.stamp = now
-            msg.header.frame_id = "world"
-            msg.pose.position.x = 0.05
-            msg.pose.position.y = -0.25
-            msg.pose.position.z = 0.0125
-            msg.pose.orientation.w = 1.0
-            self._pub_box_pose.publish(msg)
+            obj = self._pose(self._last_obj_pos, self._obj_stamp, self._cube.yaw if self._cube else 0., self._cube.roll if self._cube else 0., self._cube.pitch if self._cube else 0.)
+            box = self._pose(self._last_box_pos, self._box_stamp)
+        if obj:
+            self._pub_obj_pose.publish(obj)
+            self._pub_ball_pose.publish(obj)
+        if box:
+            self._pub_box_pose.publish(box)
 
 
 def main(args=None):
@@ -253,7 +160,7 @@ def main(args=None):
     node = PerceptionNode()
     try:
         rclpy.spin(node)
-    except (KeyboardInterrupt, rclpy.executors.ExternalShutdownException):
+    except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
         node.destroy_node()

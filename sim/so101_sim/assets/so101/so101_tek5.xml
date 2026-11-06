@@ -111,7 +111,8 @@
                 <geom type="mesh" class="collision" pos="8.32667e-17 -0.000218214 0.000949706" quat="0 1 0 0" mesh="wrist_roll_follower_so101_v1_finger_collision" material="wrist_roll_follower_so101_v1_material"/>
                 <geom type="mesh" class="collision" pos="8.32667e-17 -0.000218214 0.000949706" quat="0 1 0 0" mesh="wrist_roll_follower_so101_v1_body_collision" material="wrist_roll_follower_so101_v1_material"/>
                 <!-- Frame gripperframe -->
-                <site group="3" name="gripperframe" pos="-0.0079 -0.000218121 -0.0981274" quat="0.707107 -0 0.707107 -2.37788e-17"/>
+                <!-- Same nominal grasp centre and axes as the URDF. -->
+                <site group="3" name="gripperframe" pos="0.0171 -0.000218121 -0.0901274" quat="0 0 1 0"/>
                 <!-- Link moving_jaw_so101_v1 -->
                 <body name="moving_jaw_so101_v1" pos="0.0202 0.0188 -0.0234" quat="0.707107 0.707107 -1.85362e-08 1.85362e-08">
                   <!-- Joint from gripper to moving_jaw_so101_v1 -->
@@ -119,7 +120,465 @@
                   <inertial pos="-0.00157495 -0.0300244 0.0192755" mass="0.012" fullinertia="6.61427e-06 1.89032e-06 5.28738e-06 -3.19807e-07 -5.90717e-09 -1.09945e-07"/>
                   <!-- Part moving_jaw_so101_v1 -->
                   <geom type="mesh" class="visual" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_so101_v1" material="moving_jaw_so101_v1_material"/>
-                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_so101_v1" material="moving_jaw_so101_v1_material"/>
+                  <!-- STL-derived convex parts preserve the concave finger surface. -->
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_00" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_01" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_02" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_03" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_04" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_05" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_06" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_07" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_08" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_09" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_10" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_11" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_12" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_13" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_14" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_15" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_16" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_17" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_18" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_19" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_20" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_21" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_22" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_23" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_24" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_25" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_26" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_27" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_28" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_29" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_30" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_31" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_32" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_33" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_34" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_35" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_36" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_37" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_38" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_39" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_40" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_41" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_42" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_43" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_44" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_45" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_46" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_47" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_48" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_49" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_50" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_51" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_52" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_53" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_54" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_55" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_56" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_57" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_58" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_59" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_60" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_61" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_62" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_63" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_64" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_65" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_66" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_67" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_68" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_69" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_70" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_71" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_72" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_73" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_74" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_75" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_76" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_77" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_78" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_79" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_80" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_81" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_82" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_83" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_84" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_85" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_86" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_87" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_88" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_89" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_90" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_91" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_92" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_93" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_94" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_95" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_96" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_97" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_98" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_99" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_100" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_101" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_102" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_103" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_104" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_105" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_106" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_107" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_108" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_109" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_110" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_111" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_112" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_113" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_114" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_115" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_116" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_117" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_118" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_119" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_120" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_121" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_122" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_123" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_124" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_125" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_126" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_127" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_128" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_129" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_130" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_131" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_132" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_133" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_134" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_135" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_136" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_137" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_138" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_139" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_140" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_141" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_142" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_143" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_144" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_145" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_146" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_147" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_148" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_149" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_150" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_151" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_152" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_153" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_154" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_155" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_156" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_157" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_158" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_159" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_160" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_161" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_162" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_163" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_164" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_165" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_166" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_167" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_168" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_169" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_170" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_171" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_172" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_173" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_174" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_175" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_176" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_177" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_178" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_179" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_180" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_181" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_182" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_183" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_184" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_185" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_186" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_187" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_188" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_189" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_190" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_191" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_192" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_193" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_194" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_195" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_196" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_197" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_198" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_199" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_200" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_201" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_202" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_203" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_204" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_205" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_206" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_207" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_208" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_209" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_210" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_211" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_212" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_213" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_214" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_215" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_216" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_217" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_218" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_219" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_220" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_221" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_222" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_223" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_224" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_225" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_226" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_227" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_228" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_229" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_230" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_231" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_232" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_233" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_234" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_235" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_236" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_237" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_238" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_239" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_240" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_241" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_242" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_243" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_244" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_245" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_246" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_247" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_248" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_249" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_250" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_251" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_252" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_253" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_254" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_255" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_256" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_257" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_258" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_259" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_260" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_261" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_262" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_263" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_264" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_265" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_266" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_267" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_268" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_269" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_270" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_271" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_272" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_273" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_274" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_275" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_276" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_277" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_278" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_279" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_280" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_281" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_282" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_283" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_284" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_285" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_286" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_287" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_288" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_289" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_290" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_291" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_292" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_293" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_294" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_295" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_296" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_297" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_298" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_299" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_300" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_301" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_302" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_303" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_304" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_305" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_306" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_307" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_308" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_309" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_310" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_311" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_312" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_313" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_314" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_315" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_316" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_317" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_318" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_319" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_320" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_321" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_322" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_323" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_324" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_325" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_326" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_327" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_328" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_329" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_330" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_331" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_332" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_333" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_334" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_335" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_336" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_337" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_338" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_339" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_340" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_341" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_342" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_343" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_344" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_345" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_346" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_347" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_348" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_349" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_350" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_351" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_352" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_353" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_354" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_355" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_356" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_357" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_358" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_359" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_360" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_361" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_362" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_363" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_364" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_365" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_366" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_367" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_368" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_369" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_370" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_371" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_372" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_373" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_374" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_375" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_376" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_377" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_378" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_379" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_380" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_381" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_382" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_383" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_384" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_385" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_386" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_387" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_388" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_389" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_390" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_391" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_392" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_393" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_394" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_395" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_396" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_397" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_398" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_399" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_400" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_401" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_402" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_403" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_404" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_405" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_406" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_407" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_408" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_409" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_410" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_411" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_412" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_413" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_414" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_415" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_416" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_417" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_418" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_419" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_420" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_421" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_422" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_423" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_424" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_425" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_426" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_427" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_428" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_429" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_430" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_431" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_432" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_433" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_434" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_435" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_436" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_437" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_438" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_439" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_440" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_441" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_442" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_443" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_444" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_445" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_446" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_447" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_448" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_449" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_450" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_451" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_452" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_453" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_454" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_455" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_456" material="moving_jaw_so101_v1_material"/>
+                  <geom type="mesh" class="collision" pos="-5.55112e-17 -5.55112e-17 0.0189" quat="1 -0 3.00524e-16 -2.00834e-17" mesh="moving_jaw_collision_457" material="moving_jaw_so101_v1_material"/>
                 </body>
               </body>
             </body>
@@ -136,6 +595,464 @@
     <mesh file="wrist_roll_follower_so101_v1_finger_collision.stl"/>
     <mesh file="wrist_roll_follower_so101_v1_body_collision.stl"/>
     <mesh file="moving_jaw_so101_v1.stl"/>
+    <mesh file="moving_jaw_collision_00.stl"/>
+    <mesh file="moving_jaw_collision_01.stl"/>
+    <mesh file="moving_jaw_collision_02.stl"/>
+    <mesh file="moving_jaw_collision_03.stl"/>
+    <mesh file="moving_jaw_collision_04.stl"/>
+    <mesh file="moving_jaw_collision_05.stl"/>
+    <mesh file="moving_jaw_collision_06.stl"/>
+    <mesh file="moving_jaw_collision_07.stl"/>
+    <mesh file="moving_jaw_collision_08.stl"/>
+    <mesh file="moving_jaw_collision_09.stl"/>
+    <mesh file="moving_jaw_collision_10.stl"/>
+    <mesh file="moving_jaw_collision_11.stl"/>
+    <mesh file="moving_jaw_collision_12.stl"/>
+    <mesh file="moving_jaw_collision_13.stl"/>
+    <mesh file="moving_jaw_collision_14.stl"/>
+    <mesh file="moving_jaw_collision_15.stl"/>
+    <mesh file="moving_jaw_collision_16.stl"/>
+    <mesh file="moving_jaw_collision_17.stl"/>
+    <mesh file="moving_jaw_collision_18.stl"/>
+    <mesh file="moving_jaw_collision_19.stl"/>
+    <mesh file="moving_jaw_collision_20.stl"/>
+    <mesh file="moving_jaw_collision_21.stl"/>
+    <mesh file="moving_jaw_collision_22.stl"/>
+    <mesh file="moving_jaw_collision_23.stl"/>
+    <mesh file="moving_jaw_collision_24.stl"/>
+    <mesh file="moving_jaw_collision_25.stl"/>
+    <mesh file="moving_jaw_collision_26.stl"/>
+    <mesh file="moving_jaw_collision_27.stl"/>
+    <mesh file="moving_jaw_collision_28.stl"/>
+    <mesh file="moving_jaw_collision_29.stl"/>
+    <mesh file="moving_jaw_collision_30.stl"/>
+    <mesh file="moving_jaw_collision_31.stl"/>
+    <mesh file="moving_jaw_collision_32.stl"/>
+    <mesh file="moving_jaw_collision_33.stl"/>
+    <mesh file="moving_jaw_collision_34.stl"/>
+    <mesh file="moving_jaw_collision_35.stl"/>
+    <mesh file="moving_jaw_collision_36.stl"/>
+    <mesh file="moving_jaw_collision_37.stl"/>
+    <mesh file="moving_jaw_collision_38.stl"/>
+    <mesh file="moving_jaw_collision_39.stl"/>
+    <mesh file="moving_jaw_collision_40.stl"/>
+    <mesh file="moving_jaw_collision_41.stl"/>
+    <mesh file="moving_jaw_collision_42.stl"/>
+    <mesh file="moving_jaw_collision_43.stl"/>
+    <mesh file="moving_jaw_collision_44.stl"/>
+    <mesh file="moving_jaw_collision_45.stl"/>
+    <mesh file="moving_jaw_collision_46.stl"/>
+    <mesh file="moving_jaw_collision_47.stl"/>
+    <mesh file="moving_jaw_collision_48.stl"/>
+    <mesh file="moving_jaw_collision_49.stl"/>
+    <mesh file="moving_jaw_collision_50.stl"/>
+    <mesh file="moving_jaw_collision_51.stl"/>
+    <mesh file="moving_jaw_collision_52.stl"/>
+    <mesh file="moving_jaw_collision_53.stl"/>
+    <mesh file="moving_jaw_collision_54.stl"/>
+    <mesh file="moving_jaw_collision_55.stl"/>
+    <mesh file="moving_jaw_collision_56.stl"/>
+    <mesh file="moving_jaw_collision_57.stl"/>
+    <mesh file="moving_jaw_collision_58.stl"/>
+    <mesh file="moving_jaw_collision_59.stl"/>
+    <mesh file="moving_jaw_collision_60.stl"/>
+    <mesh file="moving_jaw_collision_61.stl"/>
+    <mesh file="moving_jaw_collision_62.stl"/>
+    <mesh file="moving_jaw_collision_63.stl"/>
+    <mesh file="moving_jaw_collision_64.stl"/>
+    <mesh file="moving_jaw_collision_65.stl"/>
+    <mesh file="moving_jaw_collision_66.stl"/>
+    <mesh file="moving_jaw_collision_67.stl"/>
+    <mesh file="moving_jaw_collision_68.stl"/>
+    <mesh file="moving_jaw_collision_69.stl"/>
+    <mesh file="moving_jaw_collision_70.stl"/>
+    <mesh file="moving_jaw_collision_71.stl"/>
+    <mesh file="moving_jaw_collision_72.stl"/>
+    <mesh file="moving_jaw_collision_73.stl"/>
+    <mesh file="moving_jaw_collision_74.stl"/>
+    <mesh file="moving_jaw_collision_75.stl"/>
+    <mesh file="moving_jaw_collision_76.stl"/>
+    <mesh file="moving_jaw_collision_77.stl"/>
+    <mesh file="moving_jaw_collision_78.stl"/>
+    <mesh file="moving_jaw_collision_79.stl"/>
+    <mesh file="moving_jaw_collision_80.stl"/>
+    <mesh file="moving_jaw_collision_81.stl"/>
+    <mesh file="moving_jaw_collision_82.stl"/>
+    <mesh file="moving_jaw_collision_83.stl"/>
+    <mesh file="moving_jaw_collision_84.stl"/>
+    <mesh file="moving_jaw_collision_85.stl"/>
+    <mesh file="moving_jaw_collision_86.stl"/>
+    <mesh file="moving_jaw_collision_87.stl"/>
+    <mesh file="moving_jaw_collision_88.stl"/>
+    <mesh file="moving_jaw_collision_89.stl"/>
+    <mesh file="moving_jaw_collision_90.stl"/>
+    <mesh file="moving_jaw_collision_91.stl"/>
+    <mesh file="moving_jaw_collision_92.stl"/>
+    <mesh file="moving_jaw_collision_93.stl"/>
+    <mesh file="moving_jaw_collision_94.stl"/>
+    <mesh file="moving_jaw_collision_95.stl"/>
+    <mesh file="moving_jaw_collision_96.stl"/>
+    <mesh file="moving_jaw_collision_97.stl"/>
+    <mesh file="moving_jaw_collision_98.stl"/>
+    <mesh file="moving_jaw_collision_99.stl"/>
+    <mesh file="moving_jaw_collision_100.stl"/>
+    <mesh file="moving_jaw_collision_101.stl"/>
+    <mesh file="moving_jaw_collision_102.stl"/>
+    <mesh file="moving_jaw_collision_103.stl"/>
+    <mesh file="moving_jaw_collision_104.stl"/>
+    <mesh file="moving_jaw_collision_105.stl"/>
+    <mesh file="moving_jaw_collision_106.stl"/>
+    <mesh file="moving_jaw_collision_107.stl"/>
+    <mesh file="moving_jaw_collision_108.stl"/>
+    <mesh file="moving_jaw_collision_109.stl"/>
+    <mesh file="moving_jaw_collision_110.stl"/>
+    <mesh file="moving_jaw_collision_111.stl"/>
+    <mesh file="moving_jaw_collision_112.stl"/>
+    <mesh file="moving_jaw_collision_113.stl"/>
+    <mesh file="moving_jaw_collision_114.stl"/>
+    <mesh file="moving_jaw_collision_115.stl"/>
+    <mesh file="moving_jaw_collision_116.stl"/>
+    <mesh file="moving_jaw_collision_117.stl"/>
+    <mesh file="moving_jaw_collision_118.stl"/>
+    <mesh file="moving_jaw_collision_119.stl"/>
+    <mesh file="moving_jaw_collision_120.stl"/>
+    <mesh file="moving_jaw_collision_121.stl"/>
+    <mesh file="moving_jaw_collision_122.stl"/>
+    <mesh file="moving_jaw_collision_123.stl"/>
+    <mesh file="moving_jaw_collision_124.stl"/>
+    <mesh file="moving_jaw_collision_125.stl"/>
+    <mesh file="moving_jaw_collision_126.stl"/>
+    <mesh file="moving_jaw_collision_127.stl"/>
+    <mesh file="moving_jaw_collision_128.stl"/>
+    <mesh file="moving_jaw_collision_129.stl"/>
+    <mesh file="moving_jaw_collision_130.stl"/>
+    <mesh file="moving_jaw_collision_131.stl"/>
+    <mesh file="moving_jaw_collision_132.stl"/>
+    <mesh file="moving_jaw_collision_133.stl"/>
+    <mesh file="moving_jaw_collision_134.stl"/>
+    <mesh file="moving_jaw_collision_135.stl"/>
+    <mesh file="moving_jaw_collision_136.stl"/>
+    <mesh file="moving_jaw_collision_137.stl"/>
+    <mesh file="moving_jaw_collision_138.stl"/>
+    <mesh file="moving_jaw_collision_139.stl"/>
+    <mesh file="moving_jaw_collision_140.stl"/>
+    <mesh file="moving_jaw_collision_141.stl"/>
+    <mesh file="moving_jaw_collision_142.stl"/>
+    <mesh file="moving_jaw_collision_143.stl"/>
+    <mesh file="moving_jaw_collision_144.stl"/>
+    <mesh file="moving_jaw_collision_145.stl"/>
+    <mesh file="moving_jaw_collision_146.stl"/>
+    <mesh file="moving_jaw_collision_147.stl"/>
+    <mesh file="moving_jaw_collision_148.stl"/>
+    <mesh file="moving_jaw_collision_149.stl"/>
+    <mesh file="moving_jaw_collision_150.stl"/>
+    <mesh file="moving_jaw_collision_151.stl"/>
+    <mesh file="moving_jaw_collision_152.stl"/>
+    <mesh file="moving_jaw_collision_153.stl"/>
+    <mesh file="moving_jaw_collision_154.stl"/>
+    <mesh file="moving_jaw_collision_155.stl"/>
+    <mesh file="moving_jaw_collision_156.stl"/>
+    <mesh file="moving_jaw_collision_157.stl"/>
+    <mesh file="moving_jaw_collision_158.stl"/>
+    <mesh file="moving_jaw_collision_159.stl"/>
+    <mesh file="moving_jaw_collision_160.stl"/>
+    <mesh file="moving_jaw_collision_161.stl"/>
+    <mesh file="moving_jaw_collision_162.stl"/>
+    <mesh file="moving_jaw_collision_163.stl"/>
+    <mesh file="moving_jaw_collision_164.stl"/>
+    <mesh file="moving_jaw_collision_165.stl"/>
+    <mesh file="moving_jaw_collision_166.stl"/>
+    <mesh file="moving_jaw_collision_167.stl"/>
+    <mesh file="moving_jaw_collision_168.stl"/>
+    <mesh file="moving_jaw_collision_169.stl"/>
+    <mesh file="moving_jaw_collision_170.stl"/>
+    <mesh file="moving_jaw_collision_171.stl"/>
+    <mesh file="moving_jaw_collision_172.stl"/>
+    <mesh file="moving_jaw_collision_173.stl"/>
+    <mesh file="moving_jaw_collision_174.stl"/>
+    <mesh file="moving_jaw_collision_175.stl"/>
+    <mesh file="moving_jaw_collision_176.stl"/>
+    <mesh file="moving_jaw_collision_177.stl"/>
+    <mesh file="moving_jaw_collision_178.stl"/>
+    <mesh file="moving_jaw_collision_179.stl"/>
+    <mesh file="moving_jaw_collision_180.stl"/>
+    <mesh file="moving_jaw_collision_181.stl"/>
+    <mesh file="moving_jaw_collision_182.stl"/>
+    <mesh file="moving_jaw_collision_183.stl"/>
+    <mesh file="moving_jaw_collision_184.stl"/>
+    <mesh file="moving_jaw_collision_185.stl"/>
+    <mesh file="moving_jaw_collision_186.stl"/>
+    <mesh file="moving_jaw_collision_187.stl"/>
+    <mesh file="moving_jaw_collision_188.stl"/>
+    <mesh file="moving_jaw_collision_189.stl"/>
+    <mesh file="moving_jaw_collision_190.stl"/>
+    <mesh file="moving_jaw_collision_191.stl"/>
+    <mesh file="moving_jaw_collision_192.stl"/>
+    <mesh file="moving_jaw_collision_193.stl"/>
+    <mesh file="moving_jaw_collision_194.stl"/>
+    <mesh file="moving_jaw_collision_195.stl"/>
+    <mesh file="moving_jaw_collision_196.stl"/>
+    <mesh file="moving_jaw_collision_197.stl"/>
+    <mesh file="moving_jaw_collision_198.stl"/>
+    <mesh file="moving_jaw_collision_199.stl"/>
+    <mesh file="moving_jaw_collision_200.stl"/>
+    <mesh file="moving_jaw_collision_201.stl"/>
+    <mesh file="moving_jaw_collision_202.stl"/>
+    <mesh file="moving_jaw_collision_203.stl"/>
+    <mesh file="moving_jaw_collision_204.stl"/>
+    <mesh file="moving_jaw_collision_205.stl"/>
+    <mesh file="moving_jaw_collision_206.stl"/>
+    <mesh file="moving_jaw_collision_207.stl"/>
+    <mesh file="moving_jaw_collision_208.stl"/>
+    <mesh file="moving_jaw_collision_209.stl"/>
+    <mesh file="moving_jaw_collision_210.stl"/>
+    <mesh file="moving_jaw_collision_211.stl"/>
+    <mesh file="moving_jaw_collision_212.stl"/>
+    <mesh file="moving_jaw_collision_213.stl"/>
+    <mesh file="moving_jaw_collision_214.stl"/>
+    <mesh file="moving_jaw_collision_215.stl"/>
+    <mesh file="moving_jaw_collision_216.stl"/>
+    <mesh file="moving_jaw_collision_217.stl"/>
+    <mesh file="moving_jaw_collision_218.stl"/>
+    <mesh file="moving_jaw_collision_219.stl"/>
+    <mesh file="moving_jaw_collision_220.stl"/>
+    <mesh file="moving_jaw_collision_221.stl"/>
+    <mesh file="moving_jaw_collision_222.stl"/>
+    <mesh file="moving_jaw_collision_223.stl"/>
+    <mesh file="moving_jaw_collision_224.stl"/>
+    <mesh file="moving_jaw_collision_225.stl"/>
+    <mesh file="moving_jaw_collision_226.stl"/>
+    <mesh file="moving_jaw_collision_227.stl"/>
+    <mesh file="moving_jaw_collision_228.stl"/>
+    <mesh file="moving_jaw_collision_229.stl"/>
+    <mesh file="moving_jaw_collision_230.stl"/>
+    <mesh file="moving_jaw_collision_231.stl"/>
+    <mesh file="moving_jaw_collision_232.stl"/>
+    <mesh file="moving_jaw_collision_233.stl"/>
+    <mesh file="moving_jaw_collision_234.stl"/>
+    <mesh file="moving_jaw_collision_235.stl"/>
+    <mesh file="moving_jaw_collision_236.stl"/>
+    <mesh file="moving_jaw_collision_237.stl"/>
+    <mesh file="moving_jaw_collision_238.stl"/>
+    <mesh file="moving_jaw_collision_239.stl"/>
+    <mesh file="moving_jaw_collision_240.stl"/>
+    <mesh file="moving_jaw_collision_241.stl"/>
+    <mesh file="moving_jaw_collision_242.stl"/>
+    <mesh file="moving_jaw_collision_243.stl"/>
+    <mesh file="moving_jaw_collision_244.stl"/>
+    <mesh file="moving_jaw_collision_245.stl"/>
+    <mesh file="moving_jaw_collision_246.stl"/>
+    <mesh file="moving_jaw_collision_247.stl"/>
+    <mesh file="moving_jaw_collision_248.stl"/>
+    <mesh file="moving_jaw_collision_249.stl"/>
+    <mesh file="moving_jaw_collision_250.stl"/>
+    <mesh file="moving_jaw_collision_251.stl"/>
+    <mesh file="moving_jaw_collision_252.stl"/>
+    <mesh file="moving_jaw_collision_253.stl"/>
+    <mesh file="moving_jaw_collision_254.stl"/>
+    <mesh file="moving_jaw_collision_255.stl"/>
+    <mesh file="moving_jaw_collision_256.stl"/>
+    <mesh file="moving_jaw_collision_257.stl"/>
+    <mesh file="moving_jaw_collision_258.stl"/>
+    <mesh file="moving_jaw_collision_259.stl"/>
+    <mesh file="moving_jaw_collision_260.stl"/>
+    <mesh file="moving_jaw_collision_261.stl"/>
+    <mesh file="moving_jaw_collision_262.stl"/>
+    <mesh file="moving_jaw_collision_263.stl"/>
+    <mesh file="moving_jaw_collision_264.stl"/>
+    <mesh file="moving_jaw_collision_265.stl"/>
+    <mesh file="moving_jaw_collision_266.stl"/>
+    <mesh file="moving_jaw_collision_267.stl"/>
+    <mesh file="moving_jaw_collision_268.stl"/>
+    <mesh file="moving_jaw_collision_269.stl"/>
+    <mesh file="moving_jaw_collision_270.stl"/>
+    <mesh file="moving_jaw_collision_271.stl"/>
+    <mesh file="moving_jaw_collision_272.stl"/>
+    <mesh file="moving_jaw_collision_273.stl"/>
+    <mesh file="moving_jaw_collision_274.stl"/>
+    <mesh file="moving_jaw_collision_275.stl"/>
+    <mesh file="moving_jaw_collision_276.stl"/>
+    <mesh file="moving_jaw_collision_277.stl"/>
+    <mesh file="moving_jaw_collision_278.stl"/>
+    <mesh file="moving_jaw_collision_279.stl"/>
+    <mesh file="moving_jaw_collision_280.stl"/>
+    <mesh file="moving_jaw_collision_281.stl"/>
+    <mesh file="moving_jaw_collision_282.stl"/>
+    <mesh file="moving_jaw_collision_283.stl"/>
+    <mesh file="moving_jaw_collision_284.stl"/>
+    <mesh file="moving_jaw_collision_285.stl"/>
+    <mesh file="moving_jaw_collision_286.stl"/>
+    <mesh file="moving_jaw_collision_287.stl"/>
+    <mesh file="moving_jaw_collision_288.stl"/>
+    <mesh file="moving_jaw_collision_289.stl"/>
+    <mesh file="moving_jaw_collision_290.stl"/>
+    <mesh file="moving_jaw_collision_291.stl"/>
+    <mesh file="moving_jaw_collision_292.stl"/>
+    <mesh file="moving_jaw_collision_293.stl"/>
+    <mesh file="moving_jaw_collision_294.stl"/>
+    <mesh file="moving_jaw_collision_295.stl"/>
+    <mesh file="moving_jaw_collision_296.stl"/>
+    <mesh file="moving_jaw_collision_297.stl"/>
+    <mesh file="moving_jaw_collision_298.stl"/>
+    <mesh file="moving_jaw_collision_299.stl"/>
+    <mesh file="moving_jaw_collision_300.stl"/>
+    <mesh file="moving_jaw_collision_301.stl"/>
+    <mesh file="moving_jaw_collision_302.stl"/>
+    <mesh file="moving_jaw_collision_303.stl"/>
+    <mesh file="moving_jaw_collision_304.stl"/>
+    <mesh file="moving_jaw_collision_305.stl"/>
+    <mesh file="moving_jaw_collision_306.stl"/>
+    <mesh file="moving_jaw_collision_307.stl"/>
+    <mesh file="moving_jaw_collision_308.stl"/>
+    <mesh file="moving_jaw_collision_309.stl"/>
+    <mesh file="moving_jaw_collision_310.stl"/>
+    <mesh file="moving_jaw_collision_311.stl"/>
+    <mesh file="moving_jaw_collision_312.stl"/>
+    <mesh file="moving_jaw_collision_313.stl"/>
+    <mesh file="moving_jaw_collision_314.stl"/>
+    <mesh file="moving_jaw_collision_315.stl"/>
+    <mesh file="moving_jaw_collision_316.stl"/>
+    <mesh file="moving_jaw_collision_317.stl"/>
+    <mesh file="moving_jaw_collision_318.stl"/>
+    <mesh file="moving_jaw_collision_319.stl"/>
+    <mesh file="moving_jaw_collision_320.stl"/>
+    <mesh file="moving_jaw_collision_321.stl"/>
+    <mesh file="moving_jaw_collision_322.stl"/>
+    <mesh file="moving_jaw_collision_323.stl"/>
+    <mesh file="moving_jaw_collision_324.stl"/>
+    <mesh file="moving_jaw_collision_325.stl"/>
+    <mesh file="moving_jaw_collision_326.stl"/>
+    <mesh file="moving_jaw_collision_327.stl"/>
+    <mesh file="moving_jaw_collision_328.stl"/>
+    <mesh file="moving_jaw_collision_329.stl"/>
+    <mesh file="moving_jaw_collision_330.stl"/>
+    <mesh file="moving_jaw_collision_331.stl"/>
+    <mesh file="moving_jaw_collision_332.stl"/>
+    <mesh file="moving_jaw_collision_333.stl"/>
+    <mesh file="moving_jaw_collision_334.stl"/>
+    <mesh file="moving_jaw_collision_335.stl"/>
+    <mesh file="moving_jaw_collision_336.stl"/>
+    <mesh file="moving_jaw_collision_337.stl"/>
+    <mesh file="moving_jaw_collision_338.stl"/>
+    <mesh file="moving_jaw_collision_339.stl"/>
+    <mesh file="moving_jaw_collision_340.stl"/>
+    <mesh file="moving_jaw_collision_341.stl"/>
+    <mesh file="moving_jaw_collision_342.stl"/>
+    <mesh file="moving_jaw_collision_343.stl"/>
+    <mesh file="moving_jaw_collision_344.stl"/>
+    <mesh file="moving_jaw_collision_345.stl"/>
+    <mesh file="moving_jaw_collision_346.stl"/>
+    <mesh file="moving_jaw_collision_347.stl"/>
+    <mesh file="moving_jaw_collision_348.stl"/>
+    <mesh file="moving_jaw_collision_349.stl"/>
+    <mesh file="moving_jaw_collision_350.stl"/>
+    <mesh file="moving_jaw_collision_351.stl"/>
+    <mesh file="moving_jaw_collision_352.stl"/>
+    <mesh file="moving_jaw_collision_353.stl"/>
+    <mesh file="moving_jaw_collision_354.stl"/>
+    <mesh file="moving_jaw_collision_355.stl"/>
+    <mesh file="moving_jaw_collision_356.stl"/>
+    <mesh file="moving_jaw_collision_357.stl"/>
+    <mesh file="moving_jaw_collision_358.stl"/>
+    <mesh file="moving_jaw_collision_359.stl"/>
+    <mesh file="moving_jaw_collision_360.stl"/>
+    <mesh file="moving_jaw_collision_361.stl"/>
+    <mesh file="moving_jaw_collision_362.stl"/>
+    <mesh file="moving_jaw_collision_363.stl"/>
+    <mesh file="moving_jaw_collision_364.stl"/>
+    <mesh file="moving_jaw_collision_365.stl"/>
+    <mesh file="moving_jaw_collision_366.stl"/>
+    <mesh file="moving_jaw_collision_367.stl"/>
+    <mesh file="moving_jaw_collision_368.stl"/>
+    <mesh file="moving_jaw_collision_369.stl"/>
+    <mesh file="moving_jaw_collision_370.stl"/>
+    <mesh file="moving_jaw_collision_371.stl"/>
+    <mesh file="moving_jaw_collision_372.stl"/>
+    <mesh file="moving_jaw_collision_373.stl"/>
+    <mesh file="moving_jaw_collision_374.stl"/>
+    <mesh file="moving_jaw_collision_375.stl"/>
+    <mesh file="moving_jaw_collision_376.stl"/>
+    <mesh file="moving_jaw_collision_377.stl"/>
+    <mesh file="moving_jaw_collision_378.stl"/>
+    <mesh file="moving_jaw_collision_379.stl"/>
+    <mesh file="moving_jaw_collision_380.stl"/>
+    <mesh file="moving_jaw_collision_381.stl"/>
+    <mesh file="moving_jaw_collision_382.stl"/>
+    <mesh file="moving_jaw_collision_383.stl"/>
+    <mesh file="moving_jaw_collision_384.stl"/>
+    <mesh file="moving_jaw_collision_385.stl"/>
+    <mesh file="moving_jaw_collision_386.stl"/>
+    <mesh file="moving_jaw_collision_387.stl"/>
+    <mesh file="moving_jaw_collision_388.stl"/>
+    <mesh file="moving_jaw_collision_389.stl"/>
+    <mesh file="moving_jaw_collision_390.stl"/>
+    <mesh file="moving_jaw_collision_391.stl"/>
+    <mesh file="moving_jaw_collision_392.stl"/>
+    <mesh file="moving_jaw_collision_393.stl"/>
+    <mesh file="moving_jaw_collision_394.stl"/>
+    <mesh file="moving_jaw_collision_395.stl"/>
+    <mesh file="moving_jaw_collision_396.stl"/>
+    <mesh file="moving_jaw_collision_397.stl"/>
+    <mesh file="moving_jaw_collision_398.stl"/>
+    <mesh file="moving_jaw_collision_399.stl"/>
+    <mesh file="moving_jaw_collision_400.stl"/>
+    <mesh file="moving_jaw_collision_401.stl"/>
+    <mesh file="moving_jaw_collision_402.stl"/>
+    <mesh file="moving_jaw_collision_403.stl"/>
+    <mesh file="moving_jaw_collision_404.stl"/>
+    <mesh file="moving_jaw_collision_405.stl"/>
+    <mesh file="moving_jaw_collision_406.stl"/>
+    <mesh file="moving_jaw_collision_407.stl"/>
+    <mesh file="moving_jaw_collision_408.stl"/>
+    <mesh file="moving_jaw_collision_409.stl"/>
+    <mesh file="moving_jaw_collision_410.stl"/>
+    <mesh file="moving_jaw_collision_411.stl"/>
+    <mesh file="moving_jaw_collision_412.stl"/>
+    <mesh file="moving_jaw_collision_413.stl"/>
+    <mesh file="moving_jaw_collision_414.stl"/>
+    <mesh file="moving_jaw_collision_415.stl"/>
+    <mesh file="moving_jaw_collision_416.stl"/>
+    <mesh file="moving_jaw_collision_417.stl"/>
+    <mesh file="moving_jaw_collision_418.stl"/>
+    <mesh file="moving_jaw_collision_419.stl"/>
+    <mesh file="moving_jaw_collision_420.stl"/>
+    <mesh file="moving_jaw_collision_421.stl"/>
+    <mesh file="moving_jaw_collision_422.stl"/>
+    <mesh file="moving_jaw_collision_423.stl"/>
+    <mesh file="moving_jaw_collision_424.stl"/>
+    <mesh file="moving_jaw_collision_425.stl"/>
+    <mesh file="moving_jaw_collision_426.stl"/>
+    <mesh file="moving_jaw_collision_427.stl"/>
+    <mesh file="moving_jaw_collision_428.stl"/>
+    <mesh file="moving_jaw_collision_429.stl"/>
+    <mesh file="moving_jaw_collision_430.stl"/>
+    <mesh file="moving_jaw_collision_431.stl"/>
+    <mesh file="moving_jaw_collision_432.stl"/>
+    <mesh file="moving_jaw_collision_433.stl"/>
+    <mesh file="moving_jaw_collision_434.stl"/>
+    <mesh file="moving_jaw_collision_435.stl"/>
+    <mesh file="moving_jaw_collision_436.stl"/>
+    <mesh file="moving_jaw_collision_437.stl"/>
+    <mesh file="moving_jaw_collision_438.stl"/>
+    <mesh file="moving_jaw_collision_439.stl"/>
+    <mesh file="moving_jaw_collision_440.stl"/>
+    <mesh file="moving_jaw_collision_441.stl"/>
+    <mesh file="moving_jaw_collision_442.stl"/>
+    <mesh file="moving_jaw_collision_443.stl"/>
+    <mesh file="moving_jaw_collision_444.stl"/>
+    <mesh file="moving_jaw_collision_445.stl"/>
+    <mesh file="moving_jaw_collision_446.stl"/>
+    <mesh file="moving_jaw_collision_447.stl"/>
+    <mesh file="moving_jaw_collision_448.stl"/>
+    <mesh file="moving_jaw_collision_449.stl"/>
+    <mesh file="moving_jaw_collision_450.stl"/>
+    <mesh file="moving_jaw_collision_451.stl"/>
+    <mesh file="moving_jaw_collision_452.stl"/>
+    <mesh file="moving_jaw_collision_453.stl"/>
+    <mesh file="moving_jaw_collision_454.stl"/>
+    <mesh file="moving_jaw_collision_455.stl"/>
+    <mesh file="moving_jaw_collision_456.stl"/>
+    <mesh file="moving_jaw_collision_457.stl"/>
     <mesh file="base_motor_holder_so101_v1.stl"/>
     <mesh file="upper_arm_so101_v1.stl"/>
     <mesh file="wrist_roll_pitch_so101_v2.stl"/>

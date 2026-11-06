@@ -7,7 +7,7 @@ name = "so101-sim"
 version = "0.1.0"
 description = "MuJoCo digital twin of the SO-ARM101 — same API as SO101Follower"
 requires-python = ">=3.10"
-dependencies = ["mujoco>=3.0", "numpy"]
+dependencies = ["mujoco==3.10.0", "numpy"]
 
 [tool.setuptools.packages.find]
 include = ["so101_sim*"]

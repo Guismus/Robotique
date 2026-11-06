@@ -4,3 +4,4 @@ Simulation, IK, perception and pick & place on the SO-ARM101 arm, with ROS2 and 
 
 - Project spec: [`docs/SUJET.md`](docs/SUJET.md)
 - Setup and first steps: see the bootstrap slides.
+- Grasp diagnostics, deterministic MuJoCo validation and reproduction: [`docs/GRASP_VALIDATION.md`](docs/GRASP_VALIDATION.md).
