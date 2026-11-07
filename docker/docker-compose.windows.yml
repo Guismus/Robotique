@@ -1,0 +1,15 @@
+﻿services:
+  rviz:
+    image: tek5/control
+    init: true
+    environment:
+      ROS_DOMAIN_ID: ${ROS_DOMAIN_ID:-42}
+      FASTDDS_BUILTIN_TRANSPORTS: LARGE_DATA
+      DISPLAY: :0
+      QT_X11_NO_MITSHM: '1'
+      LIBGL_ALWAYS_SOFTWARE: '1'
+    volumes:
+      - ../ros2_ws:/ros2_ws
+      - /mnt/host/wslg/.X11-unix:/tmp/.X11-unix
+    networks: [rosnet]
+    command: [bash, -lc, 'source /opt/ros/jazzy/setup.bash && source /ros2_ws/install/setup.bash && rviz2 -d /ros2_ws/so101.rviz']
