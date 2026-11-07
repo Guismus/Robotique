@@ -10,6 +10,7 @@
 # (same as SO101FollowerConfig(use_radians=True) on the real arm).
 
 import time
+import threading
 from pathlib import Path
 
 import mujoco
@@ -51,6 +52,9 @@ class SO101Sim:
         self._connected = False
         self._last_step_t = 0.0
         self._gripper_effort_target = None
+        self._physics_lock = threading.RLock()
+        self._render_lock = threading.Lock()
+        self._render_data = None
 
     # ------------------------------------------------------------------ API
 
@@ -58,9 +62,16 @@ class SO101Sim:
     def is_connected(self) -> bool:
         return self._connected
 
+    @property
+    def simulation_time(self) -> float:
+        with self._physics_lock:
+            self._require_connected()
+            return float(self.data.time)
+
     def connect(self, calibrate: bool = True) -> None:  # same signature as the real arm
         self.model = mujoco.MjModel.from_xml_path(self.scene_path)
         self.data = mujoco.MjData(self.model)
+        self._render_data = mujoco.MjData(self.model)
 
         self._joint_qpos_adr = {
             name: self.model.joint(name).qposadr[0] for name in ALL_JOINTS
@@ -124,13 +135,16 @@ class SO101Sim:
     # ------------------------------------------------------- sim utilities
 
     def render_camera(self) -> np.ndarray:
-        """RGB image (H, W, 3) uint8 of the fixed external camera."""
-        if self._renderer is None:
-            self._renderer = mujoco.Renderer(
-                self.model, height=self.camera_height, width=self.camera_width
-            )
-        self._renderer.update_scene(self.data, camera=self.camera_name)
-        return self._renderer.render()
+        """Render an atomic snapshot without holding up motor integration."""
+        with self._render_lock:
+            with self._physics_lock:
+                mujoco.mj_copyData(self._render_data, self.model, self.data)
+            if self._renderer is None:
+                self._renderer = mujoco.Renderer(
+                    self.model, height=self.camera_height, width=self.camera_width
+                )
+            self._renderer.update_scene(self._render_data, camera=self.camera_name)
+            return self._renderer.render()
 
     def randomize_object(self, radius_range=(0.18, 0.30), angle_range_deg=(-50, 60)) -> None:
         """Moves pickup_object to a reachable position, with a random yaw."""
@@ -197,6 +211,10 @@ class SO101Sim:
         self._gripper_effort_target = torque
 
     def step_once(self) -> None:
+        with self._physics_lock:
+            self._step_once_unlocked()
+
+    def _step_once_unlocked(self) -> None:
         # Interpolate incoming position samples at the motor tick. The gains
         # and force limits stay unchanged; acceleration limits belong to the
         # command trajectory, avoiding impulses from 20Hz stair-step targets.
@@ -231,8 +249,9 @@ class SO101Sim:
         """Advance from the driver's control clock, independently of sensor reads."""
         if not np.isfinite(seconds) or seconds < 0:
             raise ValueError("Expected a finite nonnegative simulation duration")
-        for _ in range(round(seconds / self.model.opt.timestep)):
-            self.step_once()
+        with self._physics_lock:
+            for _ in range(round(seconds / self.model.opt.timestep)):
+                self._step_once_unlocked()
 
     def _gripper_pct_to_rad(self, pct: float) -> float:
         lo, hi = self._gripper_range

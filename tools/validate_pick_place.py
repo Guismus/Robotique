@@ -81,7 +81,7 @@ def run(seed, args):
         return sim
     original_connect = DriverClass._connect_arm
     DriverClass._connect_arm = connect_sim
-    rclpy.init(args=["--ros-args", "-p", "use_sim_time:=true", "--log-level", "warn"])
+    rclpy.init(args=["--ros-args", "-p", "use_sim_time:=true", "-p", "publish_sim_clock:=false", "--log-level", "warn"])
     driver = DriverClass()
     DriverClass._connect_arm = original_connect
     perception = perception_module.PerceptionNode()

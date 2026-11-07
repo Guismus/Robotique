@@ -186,7 +186,9 @@ class BrainNode(Node):
         self._pub_joint_cmd.publish(msg)
 
     def _transition(self, state):
-        self.get_logger().info(f"{self._state.name} -> {state.name}")
+        # First INFO publication can block for DDS/log initialization long
+        # enough to expire joint feedback. Keep routine transitions at DEBUG.
+        self.get_logger().debug(f"{self._state.name} -> {state.name}")
         self._state, self._entered, self._stable_since = state, self._now(), None
         self._state_timeout = 12.
 

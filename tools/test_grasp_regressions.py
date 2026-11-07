@@ -4,13 +4,14 @@ from pathlib import Path
 import sys
 import unittest
 import hashlib
+import threading
 from types import SimpleNamespace
 import cv2
 import mujoco
 import numpy as np
 import rclpy
 from geometry_msgs.msg import PoseStamped
-from sensor_msgs.msg import JointState
+from sensor_msgs.msg import JointState, Image
 
 ROOT = Path(__file__).resolve().parents[1]
 for package in ("so101_brain", "so101_driver", "so101_perception"):
@@ -178,6 +179,67 @@ class PhysicsAndVisionRegressions(unittest.TestCase):
     @classmethod
     def tearDownClass(cls):
         cls.sim.disconnect()
+
+    def test_slow_camera_uses_frozen_data_and_does_not_stop_physics(self):
+        sim = SO101Sim(seed=0, sim_dt_per_step=0)
+        sim.connect()
+        rendering, release = threading.Event(), threading.Event()
+        captured = []
+        def render():
+            rendering.set()
+            release.wait(timeout=2.)
+            return np.zeros((240, 320, 3), dtype=np.uint8)
+        sim._renderer = SimpleNamespace(update_scene=lambda data, **kwargs: captured.append(data),
+            render=render, close=lambda: None)
+        worker = threading.Thread(target=sim.render_camera)
+        try:
+            worker.start()
+            self.assertTrue(rendering.wait(timeout=2.))
+            self.assertIsNot(captured[0], sim.data)
+            old_time = captured[0].time
+            sim.advance(.02)
+            self.assertAlmostEqual(sim.data.time, old_time + .02)
+            self.assertEqual(captured[0].time, old_time)
+            self.assertFalse(release.is_set())
+        finally:
+            release.set()
+            worker.join(timeout=3.)
+            sim.disconnect()
+
+    def test_driver_publishes_physics_clock_after_advancing(self):
+        sim = SO101Sim(seed=0, sim_dt_per_step=0)
+        sim.connect()
+        messages = []
+        driver = SimpleNamespace(_lock=threading.Lock(), _robot=sim,
+            _target_positions={}, _target_gripper_effort=None, _use_sim=True,
+            _pub_clock=SimpleNamespace(publish=messages.append))
+        try:
+            before = sim.simulation_time
+            DriverNode._control_step(driver)
+            self.assertAlmostEqual(sim.simulation_time, before + .02)
+            self.assertEqual(len(messages), 1)
+            stamp = messages[0].clock
+            self.assertAlmostEqual(stamp.sec + stamp.nanosec * 1e-9, sim.simulation_time)
+        finally:
+            sim.disconnect()
+
+    def test_slow_render_does_not_refresh_camera_capture_timestamp(self):
+        now = [100.]
+        images = []
+        def render():
+            now[0] += .5
+            return np.zeros((240, 320, 3), dtype=np.uint8)
+        driver = SimpleNamespace(_use_sim=True,
+            _robot=SimpleNamespace(is_connected=True, render_camera=render,
+                get_camera_intrinsics=lambda: np.eye(3), camera_width=320, camera_height=240),
+            get_clock=lambda: SimpleNamespace(now=lambda: SimpleNamespace(to_msg=lambda: pose([0, 0, 0], now[0]).header.stamp)),
+            _cv_bridge=SimpleNamespace(cv2_to_imgmsg=lambda *args, **kwargs: Image()),
+            _pub_image=SimpleNamespace(publish=images.append),
+            _pub_camera_info=SimpleNamespace(publish=lambda msg: None))
+        DriverNode._publish_camera(driver)
+        self.assertEqual(images[0].header.stamp.sec, 100)
+        self.assertEqual(images[0].header.stamp.nanosec, 0)
+        self.assertEqual(now[0], 100.5)
 
     def test_fk_frames_match_mujoco_position_and_orientation(self):
         for q in np.random.default_rng(73).uniform(-.7, .7, (20, 5)):

@@ -16,6 +16,8 @@ def generate_launch_description():
         DeclareLaunchArgument("use_sim", default_value="true",
                               description="Simulated backend or real robot"),
         DeclareLaunchArgument("sim_seed", default_value="-1", description="Seed for repeatable simulation (-1: random)"),
+        DeclareLaunchArgument("use_sim_time", default_value=LaunchConfiguration("use_sim"),
+                              description="Publish/use the MuJoCo simulation clock"),
         DeclareLaunchArgument("port", default_value="/dev/ttyACM0",  #  Use the following command to find the robot port:
                               # sudo udevadm monitor --subsystem-match=tty --property | grep --line-buffered -E "(DEVNAME=|ACTION=)"
                               description="Serial port of the real SO-ARM101"),
@@ -28,6 +30,7 @@ def generate_launch_description():
                 "use_sim": ParameterValue(LaunchConfiguration("use_sim"), value_type=bool),
                 "port": LaunchConfiguration("port"),
                 "sim_seed": ParameterValue(LaunchConfiguration("sim_seed"), value_type=int),
+                "use_sim_time": ParameterValue(LaunchConfiguration("use_sim_time"), value_type=bool),
             }],
         ),
     ])

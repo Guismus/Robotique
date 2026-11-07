@@ -10,6 +10,7 @@ Depuis la racine du projet, avec Docker Desktop démarré :
 
 ```powershell
 docker build -f docker/Dockerfile.control -t tek5/control .
+docker build -f docker/Dockerfile.perception -t tek5/perception .
 .\tools\capture_baseline.ps1 -Revision 189020ccc6f7f2eb9dd2f5adedfaeaf78e67d335
 $Robotique = (Get-Location).Path
 docker run -d --name so101-grasp-repro --network none `
@@ -86,6 +87,7 @@ Une réussite exige simultanément :
 - un maintien au-dessus de cette hauteur pendant **tout le transport**, mesuré à chaque pas physique ;
 - le cube entier contenu dans la boîte après stabilisation ;
 - aucune pénétration cube/robot/sol ni collision robot/robot supérieure à **3 mm**.
+- le contrôle agrégé inclut aussi les contacts robot/boîte et robot/base.
 
 Le seuil de contact de 3 mm est un critère conservateur d'acceptation du banc,
 pas une modification de la physique. Les petites pénétrations des contacts
@@ -105,6 +107,24 @@ docker exec so101-grasp-repro bash -lc 'source /opt/ros/jazzy/setup.bash && sour
 Le snapshot est identifié par `source_manifest.json`. Choisir un nouveau dossier
 pour chaque snapshot ; l'outil refuse d'écraser un snapshot existant.
 
+Après les commandes `repro_before` et `repro_frozen` ci-dessus, agréger sa propre
+reproduction avec :
+
+```powershell
+docker exec so101-grasp-repro python3 /workspace/tools/summarize_grasp_validation.py --before /workspace/artifacts/repro_before --after /workspace/artifacts/repro_frozen --snapshot /workspace/artifacts/repro_source --output /workspace/artifacts/repro_comparison
+```
+
+Les preuves de la campagne terminée se résument avec :
+
+```powershell
+docker exec so101-grasp-repro python3 /workspace/tools/summarize_grasp_validation.py --before /workspace/artifacts/before20 --after /workspace/artifacts/verified6_a /workspace/artifacts/verified6_b --snapshot /workspace/artifacts/final_source_v6 --output /workspace/artifacts/accepted_final
+```
+
+Cette commande vérifie les 20 seeds, les hashes du snapshot, les sources courantes
+et les positions initiales. Son code de sortie **1 est attendu pour la campagne
+mesurée à 85 %**. Les résultats bruts restent conservés. Le détail et les limites
+de ce résultat sont dans [GRASP_DIAGNOSIS.md](GRASP_DIAGNOSIS.md).
+
 ## Voir un cycle
 
 ```powershell
@@ -118,14 +138,32 @@ des diagnostics, pas des entrées applicatives.
 Pour lancer les timers ROS normaux, utiliser trois terminaux du même conteneur :
 
 ```powershell
-docker exec -it so101-grasp-repro bash -lc 'source /opt/ros/jazzy/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch so101_driver driver.launch.py use_sim:=true sim_seed:=0'
-docker exec -it so101-grasp-repro bash -lc 'source /opt/ros/jazzy/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch so101_perception perception.launch.py'
-docker exec -it so101-grasp-repro bash -lc 'source /opt/ros/jazzy/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch so101_brain brain.launch.py'
+docker exec -it so101-grasp-repro bash -lc 'source /opt/ros/jazzy/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch so101_driver driver.launch.py use_sim:=true use_sim_time:=true sim_seed:=0'
+docker exec -it so101-grasp-repro bash -lc 'source /opt/ros/jazzy/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch so101_perception perception.launch.py use_sim_time:=true'
+docker exec -it so101-grasp-repro bash -lc 'source /opt/ros/jazzy/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch so101_brain brain.launch.py use_sim_time:=true'
 ```
 
 Ne pas faire tourner simultanément le banc déterministe et ces lancements sur
 le même domaine ROS : ils publieraient les mêmes topics. RViz peut être lancé
 avec la configuration existante si un affichage X11 est disponible.
+
+En simulation, **les trois nœuds doivent partager `use_sim_time=true`**. Le pilote
+publie `/clock` depuis le temps physique de MuJoCo, et son timer moteur utilise
+une horloge monotone indépendante. Les délais et timestamps restent ainsi liés
+à la plante, même si l'horloge système de la VM est ajustée. Le banc déterministe
+fournit lui-même `/clock` et désactive cette publication interne.
+
+Pour vérifier un lancement avec les timers normaux, sans trois terminaux :
+
+```powershell
+docker exec so101-grasp-repro bash -lc 'source /opt/ros/jazzy/setup.bash && source /ros2_ws/install/setup.bash && python3 /workspace/tools/smoke_ros_processes.py --seed 0 --seconds 180 --output /workspace/artifacts/ros_processes_repro.json'
+```
+
+Cet outil lance les trois processus, surveille leurs états et les arrête à la
+fin. Il complète le banc physique ; son seul état `FINISHED` ne remplace pas
+l'acceptation des 20 cycles. Pour revenir à une horloge système avec un backend
+matériel, les trois paramètres `use_sim_time` doivent être faux ; aucun essai
+matériel n'a été effectué ici.
 
 ## Géométries, force et limites de portée
 

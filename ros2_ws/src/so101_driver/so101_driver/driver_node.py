@@ -14,6 +14,10 @@ import rclpy.node
 from cv_bridge import CvBridge
 from lerobot.robots.so_follower import SO101Follower, SO101FollowerConfig
 from rclpy.executors import ExternalShutdownException
+from rclpy.executors import MultiThreadedExecutor
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
+from rclpy.clock import Clock, ClockType
+from rosgraph_msgs.msg import Clock as ClockMessage
 from sensor_msgs.msg import CameraInfo, Image, JointState
 from so101_interfaces.srv import SetJointPositions
 from so101_sim import SO101Sim
@@ -80,6 +84,9 @@ class DriverNode(rclpy.node.Node):
         self._target_positions: dict[str, float] = {}
         self._target_gripper_effort = None
         self._effort_fallback_reported = False
+        publish_clock = self.declare_parameter("publish_sim_clock", True).value
+        self._pub_clock = self.create_publisher(ClockMessage, "/clock", 10) if (
+            self._use_sim and publish_clock and self.get_parameter("use_sim_time").value) else None
 
         # Bridge for ROS Image messages
         self._cv_bridge = CvBridge()
@@ -100,10 +107,18 @@ class DriverNode(rclpy.node.Node):
         )
 
         # Timers
-        self._timer_control = self.create_timer(1.0 / CONTROL_HZ, self._control_step)
+        # This timer must run before /clock exists and survive system-clock
+        # adjustments. All sensor/control consumers can use simulated time.
+        self._control_clock = Clock(clock_type=ClockType.STEADY_TIME)
+        self._timer_control = self.create_timer(1.0 / CONTROL_HZ, self._control_step,
+            clock=self._control_clock)
         self._timer_joint_states = self.create_timer(1.0 / JOINT_STATE_HZ, self._publish_joint_states)
         if self._use_sim:
-            self._timer_camera = self.create_timer(1.0 / CAMERA_HZ, self._publish_camera)
+            # Rendering can take hundreds of milliseconds with software GL.
+            # Motor/feedback callbacks remain in their own serial group.
+            self._camera_group = MutuallyExclusiveCallbackGroup()
+            self._timer_camera = self.create_timer(1.0 / CAMERA_HZ, self._publish_camera,
+                callback_group=self._camera_group)
 
         self.get_logger().info("Driver node ready.")
 
@@ -205,6 +220,11 @@ class DriverNode(rclpy.node.Node):
             if self._use_sim:
                 self._robot.set_gripper_effort(gripper_effort)
                 self._robot.advance(1.0 / CONTROL_HZ)
+                if self._pub_clock is not None:
+                    message = ClockMessage()
+                    nanoseconds = round(self._robot.simulation_time * 1e9)
+                    message.clock.sec, message.clock.nanosec = divmod(nanoseconds, 1_000_000_000)
+                    self._pub_clock.publish(message)
         except Exception as e:
             self.get_logger().error(f"Error in send_action: {e}")
 
@@ -247,13 +267,12 @@ class DriverNode(rclpy.node.Node):
         if not self._use_sim or not self._robot.is_connected:
             return
 
+        now = self.get_clock().now().to_msg()
         try:
             rgb_img = self._robot.render_camera()
         except Exception as e:
             self.get_logger().error(f"Error rendering camera: {e}")
             return
-
-        now = self.get_clock().now().to_msg()
 
         # Image message
         img_msg = self._cv_bridge.cv2_to_imgmsg(rgb_img, encoding="rgb8")
@@ -283,11 +302,14 @@ class DriverNode(rclpy.node.Node):
 def main(args=None):
     rclpy.init(args=args)
     node = DriverNode()
+    executor = MultiThreadedExecutor(num_threads=2)
+    executor.add_node(node)
     try:
-        rclpy.spin(node)
+        executor.spin()
     except (KeyboardInterrupt, ExternalShutdownException):
         pass
     finally:
+        executor.shutdown()
         node.destroy_node()
         if rclpy.ok():
             rclpy.shutdown()
