@@ -2,7 +2,7 @@
 <package format="3">
   <name>so101_perception</name>
   <version>0.1.0</version>
-  <description>Golden ball detection and 3D camera-&gt;world registration.</description>
+  <description>Red cube and brown box detection and 3D camera-&gt;world registration.</description>
   <maintainer email="tek5@epitech.eu">Tek5 Robotics</maintainer>
   <license>Apache-2.0</license>
 
@@ -13,8 +13,6 @@
   <depend>cv_bridge</depend>
   <depend>message_filters</depend>
 
-  <exec_depend>python3-numpy</exec_depend>
-  <exec_depend>python3-scipy</exec_depend>
   <export>
     <build_type>ament_python</build_type>
   </export>

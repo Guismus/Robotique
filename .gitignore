@@ -1,7 +1,8 @@
-.runtime/
-artifacts/
 __pycache__/
-*.pyc
+
+.env
+!.env.example
+
 ros2_ws/build/
 ros2_ws/install/
 ros2_ws/log/
