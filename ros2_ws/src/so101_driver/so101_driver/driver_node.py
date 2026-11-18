@@ -78,7 +78,8 @@ class DriverNode(rclpy.node.Node):
     def _connect_arm(self, port: str = DEFAULT_PORT) -> SO101Sim | SO101Follower:
         """Creates and connects the backend chosen by use_sim (provided)."""
         if self._use_sim:
-            robot = SO101Sim(seed=self.declare_parameter('seed', 1).value)
+            seed = self.declare_parameter('seed', -1).value
+            robot = SO101Sim(seed=None if seed < 0 else seed)
             robot.connect()
             return robot
 

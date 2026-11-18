@@ -15,7 +15,7 @@ from pathlib import Path
 import mujoco
 import numpy as np
 
-ASSETS_DIR = Path("/opt/so101/sim/so101_sim/assets/so101")
+ASSETS_DIR = Path(__file__).resolve().parent / "assets" / "so101"
 DEFAULT_SCENE = ASSETS_DIR / "scene_tek5.xml"
 
 ARM_JOINTS = ["shoulder_pan", "shoulder_lift", "elbow_flex", "wrist_flex", "wrist_roll"]
@@ -126,14 +126,16 @@ class SO101Sim:
 
     def randomize_object(self, radius_range=(0.18, 0.30), angle_range_deg=(-50, 60)) -> None:
         """Moves pickup_object to a reachable position, with a random yaw."""
-        r = self._rng.uniform(*radius_range)
-        a = np.radians(self._rng.uniform(*angle_range_deg))
-        yaw = self._rng.uniform(0, np.pi / 2)  # the cube is invariant under 90° rotation
-        adr = self.model.joint("pickup_object_free").qposadr[0]
-        self.data.qpos[adr : adr + 3] = [r * np.cos(a), r * np.sin(a), 0.03]
-        self.data.qpos[adr + 3 : adr + 7] = [np.cos(yaw / 2), 0, 0, np.sin(yaw / 2)]
+        # Placement sans chevauchement, zone de construction reservee a y < -0.12.
+        names = ['pickup_object'] + [f'cube_{i}' for i in range(1, 10)]
+        slots = [(x, y) for x in (0.16, 0.245, 0.33) for y in (-0.07, 0.015, 0.10, 0.185)]
+        self._rng.shuffle(slots)
+        for name, (x, y) in zip(names, slots):
+            adr = self.model.joint(name + '_free').qposadr[0]
+            yaw = self._rng.uniform(0, np.pi / 2)
+            self.data.qpos[adr:adr+3] = [x+self._rng.uniform(-.003,.003), y+self._rng.uniform(-.003,.003), .026]
+            self.data.qpos[adr+3:adr+7] = [np.cos(yaw/2), 0, 0, np.sin(yaw/2)]
         self.data.qvel[:] = 0
-        # let the object settle on the ground (physics settling)
         for _ in range(200):
             mujoco.mj_step(self.model, self.data)
 

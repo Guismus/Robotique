@@ -26,7 +26,7 @@ services:
     environment:
       <<: *ros-env
       USE_SIM: ${USE_SIM:-true}
-      SIM_SEED: ${SIM_SEED:-1}
+      SIM_SEED: ${SIM_SEED:--1}
       REAL_ROBOT_PORT: ${REAL_ROBOT_PORT:-/dev/ttyACM0}
       MUJOCO_GL: osmesa
       DISPLAY: ${DISPLAY}

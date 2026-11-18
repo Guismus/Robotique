@@ -1,0 +1,24 @@
+name: tek5-bonus
+services:
+  driver:
+    build:
+      context: ..
+      dockerfile: bonus/Dockerfile
+    image: tek5/bonus
+    environment: &env
+      ROS_DOMAIN_ID: 43
+      MUJOCO_GL: osmesa
+      PYOPENGL_PLATFORM: osmesa
+      PYTHONPATH: /project/sim:/project/bonus
+    volumes: ["..:/project"]
+    command: [bash, -lc, 'source /opt/ros/jazzy/setup.bash && python3 /project/ros2_ws/src/so101_driver/so101_driver/driver_node.py --ros-args -p seed:=-1']
+  vision:
+    image: tek5/bonus
+    environment: *env
+    volumes: ["..:/project"]
+    command: [bash, -lc, 'source /opt/ros/jazzy/setup.bash && python3 /project/bonus/vision_node.py']
+  brain:
+    image: tek5/bonus
+    environment: *env
+    volumes: ["..:/project"]
+    command: [bash, -lc, 'source /opt/ros/jazzy/setup.bash && python3 /project/bonus/brain_node.py --ros-args -p urdf:=/project/sim/so101_sim/assets/so101/so101_new_calib.urdf']
