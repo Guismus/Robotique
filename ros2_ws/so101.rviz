@@ -145,6 +145,18 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /end_effector_pose
       Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: MarkerArray
+      Namespaces:
+        perception: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /perception/markers
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -179,10 +191,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 1.0399998426437378
+      Pitch: 0.8049998879432678
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.344999313354492
+      Yaw: 4.82999849319458
     Saved: ~
 Window Geometry:
   Displays:

@@ -6,10 +6,12 @@ import numpy as np
 import rclpy
 from scipy.spatial.transform import Rotation
 from rclpy.node import Node
+from rclpy.duration import Duration
 from rclpy.executors import ExternalShutdownException
 from cv_bridge import CvBridge
 from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import CameraInfo, Image, JointState
+from visualization_msgs.msg import Marker, MarkerArray
 from .vision import CAM_POS, R_CV, detect_cube, detect_box, project, cube_corners
 from .occlusion import gripper_depth
 
@@ -50,6 +52,7 @@ class PerceptionNode(Node):
         self._pub_box_pose = self.create_publisher(PoseStamped, "/drop_box_position", 10)
         self._pub_mask = self.create_publisher(Image, "/perception/mask", 2)
         self._pub_overlay = self.create_publisher(Image, "/perception/overlay", 2)
+        self._pub_markers = self.create_publisher(MarkerArray, "/perception/markers", 10)
         self.create_timer(.1, self._publish_positions)
 
     def _cb_camera_info(self, msg):
@@ -181,6 +184,25 @@ class PerceptionNode(Node):
             self._pub_ball_pose.publish(obj)
         if box:
             self._pub_box_pose.publish(box)
+        markers = MarkerArray()
+        if obj:  # cube détecté → cube rouge 5×5×5 cm
+            markers.markers.append(self._marker(obj, 0, (.05, .05, .05), (1., 0., 0., 1.)))
+        if box:  # bac détecté → plaque orange 9,6×9,6×1 cm, semi-transparente
+            markers.markers.append(self._marker(box, 1, (.096, .096, .01), (1., .65, 0., .5)))
+        if markers.markers:
+            self._pub_markers.publish(markers)
+
+    def _marker(self, pose_msg, ident, size, color):
+        """Un pavé 3D dans RViz, à la position détectée par la caméra."""
+        m = Marker()
+        m.header = pose_msg.header  # repère "world" + même horodatage
+        m.ns, m.id = "perception", ident  # 0 = cube, 1 = bac
+        m.type, m.action = Marker.CUBE, Marker.ADD
+        m.pose = pose_msg.pose  # position + rotation du cube
+        m.scale.x, m.scale.y, m.scale.z = size  # taille en mètres
+        m.color.r, m.color.g, m.color.b, m.color.a = color  # a = opacité (1 = plein)
+        m.lifetime = Duration(seconds=0.5).to_msg()  # disparaît s'il n'est plus vu
+        return m
 
 
 def main(args=None):
