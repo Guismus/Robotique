@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /RobotModel1
+        - /Image1
       Splitter Ratio: 0.5
     Tree Height: 135
   - Class: rviz_common/Selection
@@ -122,7 +123,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /external_cam/image_raw
+        Value: /perception/overlay
       Value: true
     - Alpha: 1
       Axes Length: 1
@@ -178,10 +179,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.8449997901916504
+      Pitch: 1.0399998426437378
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.294999122619629
+      Yaw: 4.344999313354492
     Saved: ~
 Window Geometry:
   Displays:
@@ -201,5 +202,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1908
-  X: 0
-  Y: 0
+  X: -32
+  Y: -32

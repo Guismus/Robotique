@@ -10,7 +10,7 @@ from rclpy.executors import ExternalShutdownException
 from cv_bridge import CvBridge
 from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import CameraInfo, Image, JointState
-from .vision import CAM_POS, R_CV, detect_cube, detect_box
+from .vision import CAM_POS, R_CV, detect_cube, detect_box, project, cube_corners
 from .occlusion import gripper_depth
 
 
@@ -49,6 +49,7 @@ class PerceptionNode(Node):
         self._pub_ball_pose = self.create_publisher(PoseStamped, "/ball_position", 10)
         self._pub_box_pose = self.create_publisher(PoseStamped, "/drop_box_position", 10)
         self._pub_mask = self.create_publisher(Image, "/perception/mask", 2)
+        self._pub_overlay = self.create_publisher(Image, "/perception/overlay", 2)
         self.create_timer(.1, self._publish_positions)
 
     def _cb_camera_info(self, msg):
@@ -130,6 +131,33 @@ class PerceptionNode(Node):
         mask_msg = self._cv_bridge.cv2_to_imgmsg(cv2.cvtColor(mask, cv2.COLOR_GRAY2RGB), encoding="rgb8")
         mask_msg.header = msg.header
         self._pub_mask.publish(mask_msg)
+        overlay = self._draw_overlay(image, pose, self._last_box_pos)
+        overlay_msg = self._cv_bridge.cv2_to_imgmsg(overlay, encoding="rgb8")
+        overlay_msg.header = msg.header  # même horodatage que l'image d'origine
+        self._pub_overlay.publish(overlay_msg)
+
+    def _draw_overlay(self, image, pose, box_pos):
+        """Dessine sur l'image caméra ce que la perception a détecté."""
+        out = image.copy()  # on ne touche pas l'image d'origine
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        if pose is not None:  # le cube a été trouvé
+            coins_3d = cube_corners(pose.position, pose.yaw, pose.roll, pose.pitch)
+            pixels = project(coins_3d, self._K, self._cam_pos, self._R_cv)
+            contour = cv2.convexHull(pixels.astype(np.int32))
+            cv2.polylines(out, [contour], True, (0, 255, 0), 2)  # contour vert
+            x, y, z = pose.position
+            u, v = contour[:, 0, :].min(axis=0)
+            cv2.putText(out, f"cube ({x:.2f}, {y:.2f}, {z:.2f})", (int(u), int(v) - 6),
+                        font, .45, (0, 255, 0), 1, cv2.LINE_AA)
+        if box_pos is not None:  # le bac a été trouvé
+            h = .048  # demi-largeur intérieure du bac (4,8 cm)
+            coins_3d = np.array([[box_pos[0] + dx, box_pos[1] + dy, box_pos[2]]
+                                 for dx, dy in ((-h, -h), (h, -h), (h, h), (-h, h))])
+            pixels = project(coins_3d, self._K, self._cam_pos, self._R_cv).astype(np.int32)
+            cv2.polylines(out, [pixels], True, (255, 165, 0), 2)  # carré orange
+            u, v = pixels.min(axis=0)
+            cv2.putText(out, "bac", (int(u), int(v) - 6), font, .45, (255, 165, 0), 1, cv2.LINE_AA)
+        return out
 
     def _pose(self, position, stamp, yaw=0., roll=0., pitch=0.):
         if position is None or stamp is None:
