@@ -1,12 +1,12 @@
 Panels:
   - Class: rviz_common/Displays
-    Help Height: 138
+    Help Height: 70
     Name: Displays
     Property Tree Widget:
       Expanded:
         - /RobotModel1
       Splitter Ratio: 0.5
-    Tree Height: 244
+    Tree Height: 135
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -52,7 +52,7 @@ Visualization Manager:
       Description Source: Topic
       Description Topic:
         Depth: 5
-        Durability Policy: Volatile
+        Durability Policy: Transient Local
         History Policy: Keep Last
         Reliability Policy: Reliable
         Value: /robot_description
@@ -110,6 +110,40 @@ Visualization Manager:
       Update Interval: 0
       Value: true
       Visual Enabled: true
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /external_cam/image_raw
+      Value: true
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz_default_plugins/Pose
+      Color: 255; 25; 0
+      Enabled: true
+      Head Length: 0.029999999329447746
+      Head Radius: 0.019999999552965164
+      Name: Pose
+      Shaft Length: 0.10000000149011612
+      Shaft Radius: 0.009999999776482582
+      Shape: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /end_effector_pose
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
@@ -144,18 +178,20 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4549998939037323
+      Pitch: 0.8449997901916504
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.639998912811279
+      Yaw: 4.294999122619629
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 1590
+  Height: 999
   Hide Left Dock: false
-  Hide Right Dock: true
-  QMainWindow State: 000000ff00000000fd000000010000000000000764000005a4fc0200000005fb000000100044006900730070006c0061007900730100000069000001e20000017800fffffffb0000001200530065006c0065006300740069006f006e0100000257000000db000000ab00fffffffb0000001e0054006f006f006c002000500072006f0070006500720074006900650073010000033e000000db000000ab00fffffffb0000000a005600690065007700730100000425000001740000012300fffffffb0000000800540069006d006501000005a5000000680000005100ffffff00000490000005a400000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Hide Right Dock: false
+  Image:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd00000002000000000000034d00000283fc0200000005fb0000001200530065006c0065006300740069006f006e00000001080000005c0000005c00fffffffb0000000a0049006d0061006700650100000149000001bc0000001600fffffffb0000001e0054006f006f006c002000500072006f0070006500720074006900650073000000025f000000e00000005c00fffffffb0000000a005600690065007700730200000250000001310000034d000000f6fb0000000800540069006d0065010000030b000000c10000003700ffffff000000020000077400000108fc0100000002fb000000100044006900730070006c0061007900730100000000000007740000015600fffffffb0000000a0049006d0061006700650000000000000007740000000000000000000004210000028300000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -164,6 +200,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 3072
+  Width: 1908
   X: 0
-  Y: 64
+  Y: 0

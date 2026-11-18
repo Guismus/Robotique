@@ -26,8 +26,8 @@ for i in 0 1 2 3; do
 done
 
 launch so101_driver driver.launch.py "use_sim:=${USE_SIM:-true}" "port:=${REAL_ROBOT_PORT:-/dev/ttyACM0}"
-launch so101_perception perception.launch.py
-launch so101_brain brain.launch.py
+launch so101_perception perception.launch.py "use_sim_time:=${USE_SIM:-true}"
+launch so101_brain brain.launch.py "use_sim_time:=${USE_SIM:-true}"
 
 shutdown() {
   trap - TERM INT
