@@ -10,6 +10,8 @@ from std_srvs.srv import Trigger
 from scipy.spatial.transform import Rotation
 from .kinematics import Kinematics, NAMES
 
+MAX_ESSAIS = 3  # nombre de cycles tentes avant d'abandonner
+
 
 class BrainNode(Node):
     def __init__(self):
@@ -60,27 +62,66 @@ class BrainNode(Node):
         if self.q is None or time.monotonic() - self.joint_time > 1 or any(n not in self.seen or time.monotonic() - self.seen[n][1] > 1 for n in ['object', 'drop_box']):
             response.message = 'Attendre les moteurs, le cube et le bac visibles.'
             return response
+        try:
+            self.plan()
+        except ValueError as error:
+            response.message = str(error)
+            return response
+        self.attempt = 1
+        response.success = True
+        response.message = 'Cycle demarre.'
+        return response
+
+    def plan(self):
+        """Calcule les angles de toutes les etapes a partir des positions vues par la camera."""
         obj = self.seen['object'][0].copy()
         box = self.seen['drop_box'][0].copy()
         above = obj.copy(); above[2] = 0.08
         drop = box.copy(); drop[2] = 0.08
-        # Calculer toutes les cibles avant de commencer a bouger.
-        try:
-            high = self.kin.solve(above, self.q)
-            low = self.kin.solve(obj, high)
-            destination = self.kin.solve(drop, high)
-        except ValueError as error:
-            response.message = str(error)
-            return response
+        # Calculer toutes les cibles avant de commencer a bouger (ValueError si inaccessible).
+        high = self.kin.solve(above, self.q)
+        low = self.kin.solve(obj, high)
+        destination = self.kin.solve(drop, high)
+        self.pickup, self.box = obj, box  # retenus pour la verification par la camera
         self.steps = [('APPROCHE', high, 100.), ('DESCENTE', low, 100.),
                       ('SAISIE', low, 0.), ('LEVAGE', high, 0.),
                       ('TRANSPORT', destination, 0.), ('DEPOT', destination, 100.),
                       ('RETRAIT', high, 100.)]
         self.index = 0
         self.goal = None
-        response.success = True
-        response.message = 'Cycle demarre.'
-        return response
+
+    def fresh_cube(self):
+        """Derniere position du cube vue il y a moins de 0,5 s, sinon None."""
+        if 'object' in self.seen and time.monotonic() - self.seen['object'][1] < 0.5:
+            return self.seen['object'][0]
+        return None
+
+    def verify(self):
+        """Boucle fermee : la camera confirme l'etape avant de continuer."""
+        cube = self.fresh_cube()
+        if self.state == 'TRANSPORT':  # pince au-dessus du bac
+            if cube is not None and np.linalg.norm(cube[:2] - self.pickup[:2]) < 0.03:
+                return self.retry('SAISIE_RATEE')  # cube encore a moins de 3 cm de sa place de depart
+        elif self.state == 'RETRAIT':  # fin du cycle
+            if cube is not None and np.linalg.norm(cube[:2] - self.box[:2]) < 0.04:
+                self.steps, self.state = [], 'CYCLE_REUSSI'  # a moins de 4 cm du centre du bac
+                self.get_logger().info(f'CYCLE_REUSSI (essai {self.attempt}/{MAX_ESSAIS})')
+                return False
+            return self.retry('PAS_DANS_LE_BAC')
+        return True  # les autres etapes : on continue
+
+    def retry(self, raison):
+        """Relance un cycle complet depuis la nouvelle position du cube, 3 essais maximum."""
+        self.get_logger().warn(f'{raison} (essai {self.attempt}/{MAX_ESSAIS})')
+        if self.attempt >= MAX_ESSAIS or self.fresh_cube() is None:
+            self.steps, self.state = [], 'ECHEC_' + raison  # on abandonne proprement
+            return False
+        self.attempt += 1
+        try:
+            self.plan()  # nouveau plan vers la position ou la camera voit le cube maintenant
+        except ValueError:
+            self.steps, self.state = [], 'ECHEC_HORS_PORTEE'
+        return False
 
     def stop(self, request, response):
         self.steps = []
@@ -111,6 +152,8 @@ class BrainNode(Node):
         self.commands.publish(JointState(name=NAMES + ['gripper'], position=self.sent.tolist() + [self.grip]))
         reached = np.max(np.abs(self.q - self.goal)) < 0.04
         if reached and now - self.started > 2.:
+            if not self.verify():
+                return  # cycle relance ou termine par la verification camera
             self.index += 1
             self.goal = None
             if self.index == len(self.steps):
