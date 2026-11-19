@@ -4,6 +4,7 @@ import numpy as np
 import rclpy
 from rclpy.node import Node
 from rclpy.duration import Duration
+from rclpy.qos import qos_profile_sensor_data
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image, CameraInfo
 from std_msgs.msg import Float64MultiArray
@@ -60,7 +61,8 @@ class PerceptionNode(Node):
         self.marker_pub = self.create_publisher(MarkerArray, '/perception/markers', 10)  # cube et bac en 3D
         self.create_subscription(CameraInfo, '/external_cam/camera_info', self.camera_info, 1)
         self.create_subscription(Float64MultiArray, '/external_cam/pose', self.camera_pose, 1)
-        self.create_subscription(Image, '/external_cam/image_raw', self.image, 1)
+        # Meme QoS capteur que le driver (BEST_EFFORT) : sinon les deux ne se connectent pas.
+        self.create_subscription(Image, '/external_cam/image_raw', self.image, qos_profile_sensor_data)
 
     def camera_info(self, msg):
         self.k = np.array(msg.k).reshape(3, 3)

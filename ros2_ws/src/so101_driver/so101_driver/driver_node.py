@@ -20,6 +20,7 @@ import rclpy
 import rclpy.node
 from lerobot.robots.so_follower import SO101Follower, SO101FollowerConfig
 from rclpy.executors import ExternalShutdownException
+from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import JointState
 from so101_sim import SO101Sim
 
@@ -63,7 +64,8 @@ class DriverNode(rclpy.node.Node):
 
         self._command = self._robot.get_observation()
         self._states = self.create_publisher(JointState, '/joint_states', 10)
-        self._images = self.create_publisher(Image, '/external_cam/image_raw', 1)
+        # QoS capteur (BEST_EFFORT) : une image perdue n'est pas renvoyee, on prefere la suivante (10 Hz).
+        self._images = self.create_publisher(Image, '/external_cam/image_raw', qos_profile_sensor_data)
         self._info = self.create_publisher(CameraInfo, '/external_cam/camera_info', 1)
         self._pose = self.create_publisher(Float64MultiArray, '/external_cam/pose', 1)
         self._bridge = CvBridge()

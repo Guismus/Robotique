@@ -1,0 +1,22 @@
+Taux de reussite, graines 1 a 20 (2026-11-19, mesure en 2 parties : 1-5 puis 6-20)
+graine 1 : CYCLE_REUSSI (essai 1/3)
+graine 2 : CYCLE_REUSSI (essai 1/3)
+graine 3 : CYCLE_REUSSI (essai 1/3)
+graine 4 : CYCLE_REUSSI (essai 1/3)
+graine 5 : CYCLE_REUSSI (essai 1/3)
+graine 6 : CYCLE_REUSSI (essai 1/3) 
+graine 7 : CYCLE_REUSSI (essai 1/3) 
+graine 8 : CYCLE_REUSSI (essai 1/3) 
+graine 9 : CYCLE_REUSSI (essai 1/3) 
+graine 10 : CYCLE_REUSSI (essai 1/3) 
+graine 11 : CYCLE_REUSSI (essai 1/3) 
+graine 12 : CYCLE_REUSSI (essai 1/3) 
+graine 13 : CYCLE_REUSSI (essai 1/3) 
+graine 14 : CYCLE_REUSSI (essai 1/3) 
+graine 15 : CYCLE_REUSSI (essai 1/3) 
+graine 16 : CYCLE_REUSSI (essai 2/3) (reprises : PAS_DANS_LE_BAC )
+graine 17 : CYCLE_REUSSI (essai 1/3) 
+graine 18 : CYCLE_REUSSI (essai 1/3) 
+graine 19 : CYCLE_REUSSI (essai 1/3) 
+graine 20 : CYCLE_REUSSI (essai 1/3) 
+TOTAL : 20 / 20 cycles reussis

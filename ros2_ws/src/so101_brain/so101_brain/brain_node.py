@@ -11,6 +11,9 @@ from scipy.spatial.transform import Rotation
 from .kinematics import Kinematics, NAMES
 
 MAX_ESSAIS = 3  # nombre de cycles tentes avant d'abandonner
+# Rotation de la base pour degager la vue camera (+90 deg). Le cube apparait entre -50 et +60 deg
+# et le bac est a -79 deg : a +90 deg, le bras ne cache ni l'un ni l'autre.
+PAN_OBSERVATION = 1.57
 
 
 class BrainNode(Node):
@@ -59,18 +62,31 @@ class BrainNode(Node):
         if self.steps:
             response.message = 'Un cycle est deja en cours.'
             return response
-        if self.q is None or time.monotonic() - self.joint_time > 1 or any(n not in self.seen or time.monotonic() - self.seen[n][1] > 1 for n in ['object', 'drop_box']):
-            response.message = 'Attendre les moteurs, le cube et le bac visibles.'
+        if self.q is None or time.monotonic() - self.joint_time > 1 or 'drop_box' not in self.seen or time.monotonic() - self.seen['drop_box'][1] > 1:
+            response.message = 'Attendre les moteurs et le bac visibles.'
+            return response
+        self.attempt = 1
+        if 'object' not in self.seen or time.monotonic() - self.seen['object'][1] > 1:
+            self.observe()  # le bras cache peut-etre le cube : on le deplace pour regarder
+            response.success = True
+            response.message = 'Cube cache : le bras se degage pour regarder.'
             return response
         try:
             self.plan()
         except ValueError as error:
             response.message = str(error)
             return response
-        self.attempt = 1
         response.success = True
         response.message = 'Cycle demarre.'
         return response
+
+    def observe(self):
+        """Tourne la base de 90 deg (pince a ~22 cm de haut) pour liberer la vue de la camera."""
+        q = self.q.copy()
+        q[0] = PAN_OBSERVATION  # q[0] = shoulder_pan, les autres articulations ne bougent pas
+        self.steps = [('DEGAGEMENT', q, 100.)]
+        self.index = 0
+        self.goal = None
 
     def plan(self):
         """Calcule les angles de toutes les etapes a partir des positions vues par la camera."""
@@ -108,15 +124,28 @@ class BrainNode(Node):
                 self.get_logger().info(f'CYCLE_REUSSI (essai {self.attempt}/{MAX_ESSAIS})')
                 return False
             return self.retry('PAS_DANS_LE_BAC')
+        elif self.state == 'DEGAGEMENT':  # bras tourne : la camera voit-elle le cube maintenant ?
+            if cube is None:
+                self.steps, self.state = [], 'ECHEC_CUBE_INVISIBLE'
+                self.get_logger().warn('ECHEC_CUBE_INVISIBLE : cube toujours pas vu apres degagement')
+                return False
+            try:
+                self.plan()
+            except ValueError:
+                self.steps, self.state = [], 'ECHEC_HORS_PORTEE'
+            return False
         return True  # les autres etapes : on continue
 
     def retry(self, raison):
         """Relance un cycle complet depuis la nouvelle position du cube, 3 essais maximum."""
         self.get_logger().warn(f'{raison} (essai {self.attempt}/{MAX_ESSAIS})')
-        if self.attempt >= MAX_ESSAIS or self.fresh_cube() is None:
+        if self.attempt >= MAX_ESSAIS:
             self.steps, self.state = [], 'ECHEC_' + raison  # on abandonne proprement
             return False
         self.attempt += 1
+        if self.fresh_cube() is None:
+            self.observe()  # cube cache par le bras : se degager d'abord, puis replanifier
+            return False
         try:
             self.plan()  # nouveau plan vers la position ou la camera voit le cube maintenant
         except ValueError:
