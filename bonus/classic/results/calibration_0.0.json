@@ -1,0 +1,72 @@
+[
+  {
+    "tilt": 0.0,
+    "height_offset": 0.0,
+    "closing_torque": 0.5,
+    "lift": 0.044766873532913726,
+    "success": true,
+    "gripper_angle": 0.4782637854559256
+  },
+  {
+    "tilt": 0.0,
+    "height_offset": 0.0,
+    "closing_torque": 1.2,
+    "lift": 0.03269410652060997,
+    "success": false,
+    "gripper_angle": 0.39178667273457285
+  },
+  {
+    "tilt": 0.0,
+    "height_offset": 0.0,
+    "closing_torque": 2.0,
+    "error": "Serrage non stabilise",
+    "success": false
+  },
+  {
+    "tilt": 0.0,
+    "height_offset": 0.01,
+    "closing_torque": 0.5,
+    "lift": 0.05858549895447729,
+    "success": true,
+    "gripper_angle": 0.47432319738817863
+  },
+  {
+    "tilt": 0.0,
+    "height_offset": 0.01,
+    "closing_torque": 1.2,
+    "lift": 0.05706327998743685,
+    "success": true,
+    "gripper_angle": 0.4347775878134934
+  },
+  {
+    "tilt": 0.0,
+    "height_offset": 0.01,
+    "closing_torque": 2.0,
+    "error": "Pince fermee a vide",
+    "success": false
+  },
+  {
+    "tilt": 0.0,
+    "height_offset": 0.02,
+    "closing_torque": 0.5,
+    "lift": -9.679722301481064e-13,
+    "success": false,
+    "gripper_angle": -0.1745291835316824
+  },
+  {
+    "tilt": 0.0,
+    "height_offset": 0.02,
+    "closing_torque": 1.2,
+    "lift": -2.8929422919710124e-09,
+    "success": false,
+    "gripper_angle": -0.1745291835316854
+  },
+  {
+    "tilt": 0.0,
+    "height_offset": 0.02,
+    "closing_torque": 2.0,
+    "lift": -9.755390939503172e-13,
+    "success": false,
+    "gripper_angle": -0.17452918353168245
+  }
+]

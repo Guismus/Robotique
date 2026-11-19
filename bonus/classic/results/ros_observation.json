@@ -1,0 +1,7 @@
+{
+  "state": "PYRAMIDE_A_VERIFIER_PHYSIQUEMENT",
+  "sequence_completed": true,
+  "physical_ground_truth_checked": false,
+  "observed_simulation_seconds": 5.0,
+  "mean_image_change": 0.0010384114583333332
+}

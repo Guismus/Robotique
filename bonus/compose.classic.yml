@@ -1,0 +1,38 @@
+name: tek5-classic
+services:
+  driver:
+    image: tek5/bonus
+    environment: &env
+      ROS_DOMAIN_ID: 44
+      LP_NUM_THREADS: 1
+      OPENBLAS_NUM_THREADS: 1
+      OMP_NUM_THREADS: 1
+      MUJOCO_GL: osmesa
+      PYOPENGL_PLATFORM: osmesa
+      PYTHONPATH: /project/sim:/project/bonus:/project/bonus/classic
+    volumes: ["..:/project"]
+    command: [bash, -lc, 'source /opt/ros/jazzy/setup.bash && python3 /project/bonus/classic/driver_node.py --ros-args -p seed:=3']
+  vision:
+    image: tek5/bonus
+    environment: *env
+    volumes: ["..:/project"]
+    command: [bash, -lc, 'source /opt/ros/jazzy/setup.bash && python3 /project/bonus/classic/vision_node.py']
+  brain:
+    image: tek5/bonus
+    environment: *env
+    volumes: ["..:/project"]
+    command: [bash, -lc, 'source /opt/ros/jazzy/setup.bash && python3 /project/bonus/classic/brain_node.py']
+
+  interface:
+    profiles: [interface]
+    image: tek5/control
+    environment:
+      ROS_DOMAIN_ID: 44
+      DISPLAY: :0
+      QT_X11_NO_MITSHM: '1'
+      LIBGL_ALWAYS_SOFTWARE: '1'
+      LP_NUM_THREADS: 1
+    volumes:
+      - '..:/project'
+      - '/mnt/host/wslg/.X11-unix:/tmp/.X11-unix'
+    command: [bash, -lc, 'source /opt/ros/jazzy/setup.bash && ros2 launch /project/bonus/classic/interface.launch.py']

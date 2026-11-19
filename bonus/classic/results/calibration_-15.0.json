@@ -1,0 +1,71 @@
+[
+  {
+    "tilt": -15.0,
+    "height_offset": 0.0,
+    "closing_torque": 0.5,
+    "lift": -3.1057993503391668e-09,
+    "success": false,
+    "gripper_angle": -0.17452976603219328
+  },
+  {
+    "tilt": -15.0,
+    "height_offset": 0.0,
+    "closing_torque": 1.2,
+    "error": "Serrage non stabilise",
+    "success": false
+  },
+  {
+    "tilt": -15.0,
+    "height_offset": 0.0,
+    "closing_torque": 2.0,
+    "error": "Serrage non stabilise",
+    "success": false
+  },
+  {
+    "tilt": -15.0,
+    "height_offset": 0.01,
+    "closing_torque": 0.5,
+    "lift": 0.04645180479556374,
+    "success": true,
+    "gripper_angle": 0.44873361409310597
+  },
+  {
+    "tilt": -15.0,
+    "height_offset": 0.01,
+    "closing_torque": 1.2,
+    "lift": -1.1345721202815628e-09,
+    "success": false,
+    "gripper_angle": -0.17452913214980048
+  },
+  {
+    "tilt": -15.0,
+    "height_offset": 0.01,
+    "closing_torque": 2.0,
+    "error": "Serrage non stabilise",
+    "success": false
+  },
+  {
+    "tilt": -15.0,
+    "height_offset": 0.02,
+    "closing_torque": 0.5,
+    "lift": -9.751158214221789e-13,
+    "success": false,
+    "gripper_angle": -0.17452913214942237
+  },
+  {
+    "tilt": -15.0,
+    "height_offset": 0.02,
+    "closing_torque": 1.2,
+    "lift": -9.756535856997317e-13,
+    "success": false,
+    "gripper_angle": -0.17452913214942317
+  },
+  {
+    "tilt": -15.0,
+    "height_offset": 0.02,
+    "closing_torque": 2.0,
+    "lift": -9.755772578667887e-13,
+    "success": false,
+    "gripper_angle": -0.17452913214942445
+  }
+]

@@ -1,0 +1,63 @@
+{
+  "tested_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "successes": 5,
+  "episodes": 5,
+  "success_rate": 1.0,
+  "calibration_seeds": [
+    0,
+    3
+  ],
+  "validation_seeds": [
+    1,
+    2,
+    4
+  ],
+  "rows": [
+    {
+      "seed": 0,
+      "success": true,
+      "status": "sequence_terminee",
+      "placed": 6,
+      "max_error_mm": 4.019563553412272,
+      "drift_mm": 0.011200292573607764
+    },
+    {
+      "seed": 1,
+      "success": true,
+      "status": "sequence_terminee",
+      "placed": 6,
+      "max_error_mm": 3.9202671953782717,
+      "drift_mm": 0.012474605561888855
+    },
+    {
+      "seed": 2,
+      "success": true,
+      "status": "sequence_terminee",
+      "placed": 6,
+      "max_error_mm": 9.856864776353053,
+      "drift_mm": 0.03666029705700529
+    },
+    {
+      "seed": 3,
+      "success": true,
+      "status": "sequence_terminee",
+      "placed": 6,
+      "max_error_mm": 3.949646999618264,
+      "drift_mm": 0.006997823750167632
+    },
+    {
+      "seed": 4,
+      "success": true,
+      "status": "sequence_terminee",
+      "placed": 6,
+      "max_error_mm": 3.955785985410719,
+      "drift_mm": 0.007043969494748006
+    }
+  ]
+}

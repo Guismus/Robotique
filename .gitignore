@@ -6,3 +6,12 @@ __pycache__/
 ros2_ws/build/
 ros2_ws/install/
 ros2_ws/log/
+
+# Apprentissages locaux : conserver seulement les politiques finales et bilans.
+bonus/rl/runs/**/replay.pkl
+bonus/rl/runs/**/sac_*_steps.zip
+bonus/rl/runs/**/ppo_*_steps.zip
+bonus/rl/**/*.avi
+
+# Videos de diagnostic volumineuses, conserver les MP4 de demonstration.
+bonus/classic/**/*.avi
