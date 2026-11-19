@@ -16,6 +16,20 @@ STYLES = {
     'drop_box': ('bac', (0, 165, 255), (.096, .096, .01), (1., .65, 0., .5)),    # plaque orange transparente
 }
 
+# Calibration ArUco : centres (x, y) en m des marqueurs colles sur la table (memes valeurs que scene_tek5.xml).
+MARKERS = {0: (0.48, -0.27), 1: (0.48, 0.27), 2: (-0.28, 0.27), 3: (-0.28, -0.27)}
+MARKER_SIZE = 0.10  # cote du carre noir, en m
+MARKER_Z = 0.001    # surface de la plaque, en m
+
+
+def marker_corners(ident):
+    """Les 4 coins du marqueur dans le monde, dans l'ordre donne par OpenCV :
+    haut-gauche, haut-droite, bas-droite, bas-gauche. Ex. marqueur 0 -> (0.43, -0.22), (0.53, -0.22)..."""
+    cx, cy = MARKERS[ident]
+    h = MARKER_SIZE / 2
+    return [[cx - h, cy + h, MARKER_Z], [cx + h, cy + h, MARKER_Z],
+            [cx + h, cy - h, MARKER_Z], [cx - h, cy - h, MARKER_Z]]
+
 
 def project_pixel(u, v, height, k, transform):
     """On suit le rayon du pixel jusqu'a la hauteur choisie, en metres."""
@@ -31,6 +45,13 @@ class PerceptionNode(Node):
     def __init__(self):
         super().__init__('so101_perception')
         self.k = self.transform = None
+        # 'aruco' : la camera se calibre avec les marqueurs ; 'sim' : pose donnee par la simulation.
+        self.mode = self.declare_parameter('calibration', 'aruco').value
+        self.sim_transform = None  # pose donnee par la sim, gardee pour mesurer l'erreur de l'ArUco
+        self.rvec = self.tvec = None  # pose monde -> camera trouvee par solvePnP
+        params = cv2.aruco.DetectorParameters()
+        params.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_SUBPIX  # coins au dixieme de pixel
+        self.aruco = cv2.aruco.ArucoDetector(cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50), params)
         self.bridge = CvBridge()
         self.position_pubs = {name: self.create_publisher(PoseStamped, '/' + name + '_position', 10)
                            for name in ['object', 'drop_box']}
@@ -46,12 +67,18 @@ class PerceptionNode(Node):
 
     def camera_pose(self, msg):
         if len(msg.data) == 16:
-            self.transform = np.array(msg.data).reshape(4, 4)
+            self.sim_transform = np.array(msg.data).reshape(4, 4)
+            if self.mode == 'sim':
+                self.transform = self.sim_transform
 
     def image(self, msg):
-        if self.k is None or self.transform is None:
+        if self.k is None:
             return
         frame = self.bridge.imgmsg_to_cv2(msg, 'bgr8')
+        if self.transform is None:
+            if self.mode == 'aruco':
+                self.calibrate(frame)
+            return
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         overlay = frame.copy()  # on dessine sur une copie, l'image d'origine reste intacte
         markers = MarkerArray()
@@ -80,11 +107,47 @@ class PerceptionNode(Node):
             self.position_pubs[name].publish(result)
             self.draw(overlay, name, contour, point)
             markers.markers.append(self.marker(result, name, ident))
-        overlay_msg = self.bridge.cv2_to_imgmsg(overlay, 'bgr8')
+        if self.rvec is not None:  # contour bleu des marqueurs, recalcule avec la pose trouvee
+            for i in MARKERS:
+                pts, _ = cv2.projectPoints(np.array(marker_corners(i), np.float32), self.rvec, self.tvec, self.k, None)
+                cv2.polylines(overlay, [pts.reshape(-1, 2).astype(np.int32)], True, (255, 0, 0), 1)
+        overlay_msg =self.bridge.cv2_to_imgmsg(overlay, 'bgr8')
         overlay_msg.header = msg.header  # meme horodatage que l'image de la camera
         self.overlay_pub.publish(overlay_msg)
         if markers.markers:
             self.marker_pub.publish(markers)
+
+    def calibrate(self, frame):
+        """Trouve ou est la camera grace aux marqueurs ArUco dont on connait la position sur la table."""
+        corners, ids, _ = self.aruco.detectMarkers(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
+        if ids is None:
+            return
+        world, pixels = [], []  # chaque coin : sa position dans le monde <-> son pixel dans l'image
+        for c, i in zip(corners, ids.ravel()):
+            if int(i) in MARKERS:
+                world += marker_corners(int(i))
+                pixels += c[0].tolist()
+        if len(world) < 8:  # au moins 2 marqueurs pour une pose fiable
+            return
+        world, pixels = np.array(world, np.float32), np.array(pixels, np.float32)
+        ok, rvec, tvec = cv2.solvePnP(world, pixels, self.k, None)
+        if not ok:
+            return
+        # Erreur de reprojection : ecart moyen, en pixels, entre les coins vus et les coins recalcules.
+        reproj = np.linalg.norm(cv2.projectPoints(world, rvec, tvec, self.k, None)[0].reshape(-1, 2) - pixels, axis=1).mean()
+        if reproj > 2.:
+            self.get_logger().warn(f'Calibration ArUco refusee : reprojection {reproj:.1f} px')
+            return
+        cam_from_world = np.eye(4)
+        cam_from_world[:3, :3] = cv2.Rodrigues(rvec)[0]
+        cam_from_world[:3, 3] = tvec.ravel()
+        self.transform = np.linalg.inv(cam_from_world)  # camera -> monde, comme la pose de la sim
+        self.rvec, self.tvec = rvec, tvec
+        text = (f'Calibration ArUco : {len(world) // 4} marqueurs, camera en {np.round(self.transform[:3, 3], 3)}, '
+                f'reprojection {reproj:.2f} px')
+        if self.sim_transform is not None:
+            text += f', ecart avec la sim {np.linalg.norm(self.transform[:3, 3] - self.sim_transform[:3, 3]) * 1000:.1f} mm'
+        self.get_logger().info(text)
 
     def draw(self, overlay, name, contour, point):
         """Entoure l'objet detecte sur l'image et ecrit sa position, ex. 'cube (0.25, 0.10)'."""

@@ -32,12 +32,29 @@
         <mesh name="pickup_object" file="hollow_cube_rhombus_50mm.stl" scale="0.001 0.001 0.001" />
         <mesh name="pickup_object_collision" file="pickup_object_collision_octant.stl"
             scale="0.001 0.001 0.001" />
+        <!-- Marqueurs ArUco (DICT_4X4_50) pour calibrer la camera, generes par ros2_ws/checks/make_aruco.py -->
+        <texture type="2d" name="aruco_0" file="aruco_0.png" />
+        <texture type="2d" name="aruco_1" file="aruco_1.png" />
+        <texture type="2d" name="aruco_2" file="aruco_2.png" />
+        <texture type="2d" name="aruco_3" file="aruco_3.png" />
+        <material name="aruco_0" texture="aruco_0" />
+        <material name="aruco_1" texture="aruco_1" />
+        <material name="aruco_2" texture="aruco_2" />
+        <material name="aruco_3" texture="aruco_3" />
     </asset>
 
     <worldbody>
         <light pos="0 0 2.5" dir="0 0 -1" directional="true" />
         <light pos="0.5 0.5 1.5" dir="-0.3 -0.3 -1" diffuse="0.4 0.4 0.4" />
         <geom name="floor" size="0 0 0.05" pos="0 0 0" type="plane" material="groundplane" />
+
+        <!-- 4 marqueurs ArUco colles sur la table, aux coins de la vue camera, hors de portee du bras.
+             Plaque de 13,3 cm (carre noir de 10 cm + bord blanc), sans collision.
+             Les positions doivent rester identiques a MARKERS dans perception_node.py. -->
+        <geom name="aruco_0" type="box" size="0.0667 0.0667 0.0005" pos="0.48 -0.27 0.0005" material="aruco_0" contype="0" conaffinity="0" />
+        <geom name="aruco_1" type="box" size="0.0667 0.0667 0.0005" pos="0.48 0.27 0.0005" material="aruco_1" contype="0" conaffinity="0" />
+        <geom name="aruco_2" type="box" size="0.0667 0.0667 0.0005" pos="-0.28 0.27 0.0005" material="aruco_2" contype="0" conaffinity="0" />
+        <geom name="aruco_3" type="box" size="0.0667 0.0667 0.0005" pos="-0.28 -0.27 0.0005" material="aruco_3" contype="0" conaffinity="0" />
 
         <!-- pickup_object: 5 cm red cube (rounded edges) pierced by 3 diamond tunnels, like the
              printed part (hollow_cube_rhombus_50mm.stl, origin at the center of the bottom face).
