@@ -4,10 +4,12 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Global Options1
-        - /Status1
+        - /RobotModel1
+        - /Image1
+        - /MarkerArray1
+        - /TF1
       Splitter Ratio: 0.5
-    Tree Height: 70
+    Tree Height: 135
   - Class: rviz_common/Selection
     Name: Selection
   - Class: rviz_common/Tool Properties
@@ -28,13 +30,31 @@ Panels:
 Visualization Manager:
   Class: ""
   Displays:
+    - Alpha: 0.5
+      Cell Size: 1
+      Class: rviz_default_plugins/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Line Style:
+        Line Width: 0.029999999329447746
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 10
+      Reference Frame: <Fixed Frame>
+      Value: true
     - Alpha: 1
       Class: rviz_default_plugins/RobotModel
       Collision Enabled: false
       Description File: ""
       Description Source: Topic
       Description Topic:
-        Depth: 1
+        Depth: 5
         Durability Policy: Transient Local
         History Policy: Keep Last
         Reliability Policy: Reliable
@@ -88,7 +108,7 @@ Visualization Manager:
       Mass Properties:
         Inertia: false
         Mass: false
-      Name: Robot
+      Name: RobotModel
       TF Prefix: ""
       Update Interval: 0
       Value: true
@@ -98,32 +118,90 @@ Visualization Manager:
       Max Value: 1
       Median window: 5
       Min Value: 0
-      Name: Camera - cube et bac
+      Name: Image
       Normalize Range: true
       Topic:
-        Depth: 1
+        Depth: 5
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /external_cam/image_raw
+        Value: /perception/overlay
       Value: true
-    - Alpha: 0.5
-      Cell Size: 1
-      Class: rviz_default_plugins/Grid
-      Color: 160; 160; 164
+    - Alpha: 1
+      Axes Length: 1
+      Axes Radius: 0.10000000149011612
+      Class: rviz_default_plugins/Pose
+      Color: 255; 25; 0
       Enabled: true
-      Line Style:
-        Line Width: 0.029999999329447746
-        Value: Lines
-      Name: Grid
-      Normal Cell Count: 0
-      Offset:
-        X: 0
-        Y: 0
-        Z: 0
-      Plane: XY
-      Plane Cell Count: 10
-      Reference Frame: <Fixed Frame>
+      Head Length: 0.029999999329447746
+      Head Radius: 0.019999999552965164
+      Name: Pose
+      Shaft Length: 0.10000000149011612
+      Shaft Radius: 0.009999999776482582
+      Shape: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /end_effector_pose
+      Value: true
+    - Class: rviz_default_plugins/MarkerArray
+      Enabled: true
+      Name: MarkerArray
+      Namespaces:
+        perception: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /perception/markers
+      Value: true
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Filter (blacklist): ""
+      Filter (whitelist): ""
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        base_link:
+          Value: true
+        gripper_frame_link:
+          Value: true
+        gripper_link:
+          Value: true
+        lower_arm_link:
+          Value: true
+        moving_jaw_so101_v1_link:
+          Value: true
+        shoulder_link:
+          Value: true
+        upper_arm_link:
+          Value: true
+        world:
+          Value: true
+        wrist_link:
+          Value: true
+      Marker Scale: 0.5
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: false
+      Tree:
+        world:
+          base_link:
+            shoulder_link:
+              upper_arm_link:
+                lower_arm_link:
+                  wrist_link:
+                    gripper_link:
+                      gripper_frame_link:
+                        {}
+                      moving_jaw_so101_v1_link:
+                        {}
+      Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
@@ -153,26 +231,26 @@ Visualization Manager:
       Focal Point:
         X: 0.18000000715255737
         Y: -0.18000000715255737
-        Z: 0.11999999731779099
+        Z: 0.6100000143051147
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.4699999988079071
+      Pitch: 0.9349998235702515
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.71999979019165
+      Yaw: 4.984999656677246
     Saved: ~
 Window Geometry:
-  Camera - cube et bac:
-    collapsed: false
   Displays:
     collapsed: false
-  Height: 840
+  Height: 999
   Hide Left Dock: false
-  Hide Right Dock: true
-  QMainWindow State: 000000ff00000000fd000000010000000000000288000002f2fc0200000006fb0000002800430061006d0065007200610020002d002000630075006200650020006500740020006200610063010000003b000000760000001600fffffffb000000100044006900730070006c00610079007301000000b7000000c7000000c700fffffffb0000001200530065006c0065006300740069006f006e0100000184000000600000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007301000001ea000000600000005c00fffffffb0000000a005600690065007700730100000250000000a0000000a000fffffffb0000000800540069006d006501000002f6000000370000003700ffffff00000222000002f200000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Hide Right Dock: false
+  Image:
+    collapsed: false
+  QMainWindow State: 000000ff00000000fd00000002000000000000034d00000283fc0200000005fb0000001200530065006c0065006300740069006f006e00000001080000005c0000005c00fffffffb0000000a0049006d0061006700650100000149000001bc0000001600fffffffb0000001e0054006f006f006c002000500072006f0070006500720074006900650073000000025f000000e00000005c00fffffffb0000000a005600690065007700730200000250000001310000034d000000f6fb0000000800540069006d0065010000030b000000c10000003700ffffff000000020000077400000108fc0100000002fb000000100044006900730070006c0061007900730100000000000007740000015600fffffffb0000000a0049006d0061006700650000000000000007740000000000000000000004210000028300000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -181,6 +259,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 1200
-  X: 216
-  Y: 113
+  Width: 1908
+  X: 0
+  Y: 0
