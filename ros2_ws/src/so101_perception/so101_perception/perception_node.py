@@ -14,8 +14,8 @@ from visualization_msgs.msg import Marker, MarkerArray
 
 # Affichage de chaque objet : (texte, couleur BGR sur l'image, taille du pave RViz en m, couleur RGBA RViz)
 STYLES = {
-    'object': ('cube', (0, 255, 0), (.05, .05, .05), (1., 0., 0., 1.)),          # cube rouge plein de 5 cm
-    'drop_box': ('bac', (0, 165, 255), (.096, .096, .01), (1., .65, 0., .5)),    # plaque orange transparente
+    'object': ('cube', (0, 255, 0), (.05, .05, .05), (1., 0., 0., 1.)),
+    'drop_box': ('bac', (0, 165, 255), (.096, .096, .01), (1., .65, 0., .5)),
 }
 
 # Calibration ArUco : centres (x, y) en m des marqueurs colles sur la table (memes valeurs que scene_tek5.xml).
@@ -25,8 +25,7 @@ MARKER_Z = 0.001    # surface de la plaque, en m
 
 
 def marker_corners(ident):
-    """Les 4 coins du marqueur dans le monde, dans l'ordre donne par OpenCV :
-    haut-gauche, haut-droite, bas-droite, bas-gauche. Ex. marqueur 0 -> (0.43, -0.22), (0.53, -0.22)..."""
+    """Coins du marqueur dans l'ordre d'OpenCV : haut-gauche, haut-droite, bas-droite, bas-gauche."""
     cx, cy = MARKERS[ident]
     h = MARKER_SIZE / 2
     return [[cx - h, cy + h, MARKER_Z], [cx + h, cy + h, MARKER_Z],
@@ -34,8 +33,7 @@ def marker_corners(ident):
 
 
 def quaternion(r):
-    """Matrice de rotation 3x3 -> quaternion (x, y, z, w), le format des TF.
-    Ex. identite -> (0, 0, 0, 1) ; demi-tour autour de z -> (0, 0, 1, 0)."""
+    """Matrice de rotation 3x3 -> quaternion (x, y, z, w)."""
     w = np.sqrt(max(0., 1. + r[0, 0] + r[1, 1] + r[2, 2])) / 2
     x = np.copysign(np.sqrt(max(0., 1. + r[0, 0] - r[1, 1] - r[2, 2])) / 2, r[2, 1] - r[1, 2])
     y = np.copysign(np.sqrt(max(0., 1. - r[0, 0] + r[1, 1] - r[2, 2])) / 2, r[0, 2] - r[2, 0])
@@ -68,21 +66,21 @@ class PerceptionNode(Node):
         self.tf = TransformBroadcaster(self)
         self.static_tf = StaticTransformBroadcaster(self)
         self.camera_tf_sent = False
-        self.cubes_pub = self.create_publisher(PoseArray, '/objects_positions', 10)  # tous les cubes vus
+        self.cubes_pub = self.create_publisher(PoseArray, '/objects_positions', 10)
         # Position de la camera trouvee par la calibration : le cerveau en a besoin pour savoir
         # ou doit apparaitre le sommet de la pile vu d'en haut (effet de perspective).
         self.camera_pub = self.create_publisher(PointStamped, '/perception/camera_position', 1)
         self.sim_transform = None  # pose donnee par la sim, gardee pour mesurer l'erreur de l'ArUco
-        self.rvec = self.tvec = None  # pose monde -> camera trouvee par solvePnP
+        self.rvec = self.tvec = None
         params = cv2.aruco.DetectorParameters()
-        params.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_SUBPIX  # coins au dixieme de pixel
+        params.cornerRefinementMethod = cv2.aruco.CORNER_REFINE_SUBPIX
         self.aruco = cv2.aruco.ArucoDetector(cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50), params)
         self.bridge = CvBridge()
         self.position_pubs = {name: self.create_publisher(PoseStamped, '/' + name + '_position', 10)
                            for name in ['object', 'drop_box']}
         self.mask_pub = self.create_publisher(Image, '/perception/mask', 1)
-        self.overlay_pub = self.create_publisher(Image, '/perception/overlay', 1)  # image camera + detections
-        self.marker_pub = self.create_publisher(MarkerArray, '/perception/markers', 10)  # cube et bac en 3D
+        self.overlay_pub = self.create_publisher(Image, '/perception/overlay', 1)
+        self.marker_pub = self.create_publisher(MarkerArray, '/perception/markers', 10)
         self.create_subscription(CameraInfo, '/external_cam/camera_info', self.camera_info, 1)
         self.create_subscription(Float64MultiArray, '/external_cam/pose', self.camera_pose, 1)
         # Meme QoS capteur que le driver (BEST_EFFORT) : sinon les deux ne se connectent pas.
@@ -105,12 +103,12 @@ class PerceptionNode(Node):
             if self.mode == 'aruco':
                 self.calibrate(frame)
             return
-        if not self.camera_tf_sent:  # une seule fois : la camera ne bouge pas
+        if not self.camera_tf_sent:
             self.static_tf.sendTransform(self.frame_tf(msg.header.stamp, 'camera', self.transform))
             self.camera_tf_sent = True
         frames = []
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        overlay = frame.copy()  # on dessine sur une copie, l'image d'origine reste intacte
+        overlay = frame.copy()
         markers = MarkerArray()
         red = cv2.inRange(hsv, (0, 140, 60), (3, 255, 255))
         red |= cv2.inRange(hsv, (155, 90, 50), (179, 255, 255))
@@ -122,7 +120,7 @@ class PerceptionNode(Node):
         for ident, (name, mask, height) in enumerate([('object', red, 0.025), ('drop_box', brown, self.box_height)]):
             contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             if not contours:
-                continue  # Aucun faux point (0, 0, 0) si le cube disparait.
+                continue
             contour = max(contours, key=cv2.contourArea)
             m = cv2.moments(contour)
             if m['m00'] < 20:
@@ -139,14 +137,14 @@ class PerceptionNode(Node):
             self.draw(overlay, name, contour, point)
             markers.markers.append(self.marker(result, name, ident))
             pose = np.eye(4)
-            pose[:3, 3] = point  # repere pose sur l'objet, axes paralleles a base_link
+            pose[:3, 3] = point
             frames.append(self.frame_tf(msg.header.stamp, self.frames[name], pose))
-        if self.rvec is not None:  # contour bleu des marqueurs, recalcule avec la pose trouvee
+        if self.rvec is not None:
             for i in MARKERS:
                 pts, _ = cv2.projectPoints(np.array(marker_corners(i), np.float32), self.rvec, self.tvec, self.k, None)
                 cv2.polylines(overlay, [pts.reshape(-1, 2).astype(np.int32)], True, (255, 0, 0), 1)
         overlay_msg =self.bridge.cv2_to_imgmsg(overlay, 'bgr8')
-        overlay_msg.header = msg.header  # meme horodatage que l'image de la camera
+        overlay_msg.header = msg.header
         self.overlay_pub.publish(overlay_msg)
         if markers.markers:
             self.marker_pub.publish(markers)
@@ -154,7 +152,6 @@ class PerceptionNode(Node):
             self.tf.sendTransform(frames)
 
     def frame_tf(self, stamp, child, pose):
-        """Un repere TF 'child' dans base_link, a partir d'une matrice 4x4 (position + rotation)."""
         t = TransformStamped()
         t.header.stamp, t.header.frame_id, t.child_frame_id = stamp, 'base_link', child
         t.transform.translation.x, t.transform.translation.y, t.transform.translation.z = map(float, pose[:3, 3])
@@ -163,14 +160,13 @@ class PerceptionNode(Node):
         return t
 
     def publish_cubes(self, red, header, overlay, markers):
-        """Pile : une position par tache rouge (un cube vaut ~290 pixels a 70 cm de la camera).
-        Le plus gros cube est aussi publie seul sur /object_position (phase 1), juste apres."""
+        """Pile : une position par tache rouge ; la plus grosse part aussi sur /object_position."""
         cubes = PoseArray()
         cubes.header.stamp, cubes.header.frame_id = header.stamp, 'base_link'
         contours, _ = cv2.findContours(red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         for contour in contours:
             m = cv2.moments(contour)
-            if m['m00'] < 80:  # petites taches = bruit, pas un cube
+            if m['m00'] < 80:
                 continue
             point = project_pixel(m['m10']/m['m00'], m['m01']/m['m00'], 0.025, self.k, self.transform)
             if point is None or not np.isfinite(point).all():
@@ -181,7 +177,7 @@ class PerceptionNode(Node):
             cubes.poses.append(pose)
             self.draw(overlay, 'object', contour, point)
             stamped = PoseStamped(header=cubes.header, pose=pose)
-            markers.markers.append(self.marker(stamped, 'object', 10 + len(cubes.poses)))  # ids 11, 12, 13...
+            markers.markers.append(self.marker(stamped, 'object', 10 + len(cubes.poses)))
         self.cubes_pub.publish(cubes)
         camera = PointStamped(header=cubes.header)
         camera.point.x, camera.point.y, camera.point.z = map(float, self.transform[:3, 3])
@@ -192,7 +188,7 @@ class PerceptionNode(Node):
         corners, ids, _ = self.aruco.detectMarkers(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY))
         if ids is None:
             return
-        world, pixels = [], []  # chaque coin : sa position dans le monde <-> son pixel dans l'image
+        world, pixels = [], []
         for c, i in zip(corners, ids.ravel()):
             if int(i) in MARKERS:
                 world += marker_corners(int(i))
@@ -211,7 +207,7 @@ class PerceptionNode(Node):
         cam_from_world = np.eye(4)
         cam_from_world[:3, :3] = cv2.Rodrigues(rvec)[0]
         cam_from_world[:3, 3] = tvec.ravel()
-        self.transform = np.linalg.inv(cam_from_world)  # camera -> monde, comme la pose de la sim
+        self.transform = np.linalg.inv(cam_from_world)
         self.rvec, self.tvec = rvec, tvec
         text = (f'Calibration ArUco : {len(world) // 4} marqueurs, camera en {np.round(self.transform[:3, 3], 3)}, '
                 f'reprojection {reproj:.2f} px')
@@ -220,24 +216,22 @@ class PerceptionNode(Node):
         self.get_logger().info(text)
 
     def draw(self, overlay, name, contour, point):
-        """Entoure l'objet detecte sur l'image et ecrit sa position, ex. 'cube (0.25, 0.10)'."""
         label, color, _, _ = STYLES[name]
         cv2.drawContours(overlay, [contour], -1, color, 2)
-        x, y, _, _ = cv2.boundingRect(contour)  # coin haut-gauche de la zone detectee
+        x, y, _, _ = cv2.boundingRect(contour)
         cv2.putText(overlay, f'{label} ({point[0]:.2f}, {point[1]:.2f})', (x, max(y - 5, 10)),
                     cv2.FONT_HERSHEY_SIMPLEX, .45, color, 1, cv2.LINE_AA)
 
     def marker(self, pose_msg, name, ident):
-        """Un pave 3D dans RViz, a la position calculee depuis la camera."""
         _, _, size, color = STYLES[name]
         m = Marker()
-        m.header = pose_msg.header  # repere base_link + meme horodatage
-        m.ns, m.id = 'perception', ident  # 0 = cube, 1 = bac
+        m.header = pose_msg.header
+        m.ns, m.id = 'perception', ident
         m.type, m.action = Marker.CUBE, Marker.ADD
         m.pose = pose_msg.pose
         m.scale.x, m.scale.y, m.scale.z = size
-        m.color.r, m.color.g, m.color.b, m.color.a = color  # a = opacite (1 = plein)
-        m.lifetime = Duration(seconds=0.5).to_msg()  # disparait s'il n'est plus vu
+        m.color.r, m.color.g, m.color.b, m.color.a = color
+        m.lifetime = Duration(seconds=0.5).to_msg()
         return m
 
 
