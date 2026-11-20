@@ -127,7 +127,7 @@ class SO101Sim:
     def randomize_object(self, radius_range=(0.18, 0.30), angle_range_deg=(-50, 60)) -> None:
         """Moves pickup_object to a reachable position, with a random yaw."""
         if "cube_2" in [self.model.body(i).name for i in range(self.model.nbody)]:
-            self._randomize_stack_cubes(radius_range)  # scene_stack.xml (phase 2)
+            self._randomize_stack_cubes(radius_range)  # scene_stack.xml (pile de 3 cubes)
             return
         r = self._rng.uniform(*radius_range)
         a = np.radians(self._rng.uniform(*angle_range_deg))
@@ -141,7 +141,7 @@ class SO101Sim:
             mujoco.mj_step(self.model, self.data)
 
     def _randomize_stack_cubes(self, radius_range) -> None:
-        """Phase 2 : place les 3 cubes au hasard, a 9 cm minimum les uns des autres
+        """Pile : place les 3 cubes au hasard, a 9 cm minimum les uns des autres
         et a 12 cm minimum du socle de la pile (sinon la camera les confondrait)."""
         base = self.data.body("drop_box").xpos[:2]
         placed = []

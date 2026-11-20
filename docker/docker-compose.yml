@@ -28,7 +28,7 @@ services:
       USE_SIM: ${USE_SIM:-true}
       SIM_SEED: ${SIM_SEED:-1}
       PYTHONPATH: /opt/so101/sim   # la sim du depot (montee) passe avant la copie installee dans l image
-      MODE: ${MODE:-pick}          # pick = phase 1 (cube -> bac), stack = phase 2 (3 cubes empiles)
+      MODE: ${MODE:-pick}          # pick = phase 1 (cube -> bac), stack = pile de 3 cubes (vrai bras)
       REAL_ROBOT_PORT: ${REAL_ROBOT_PORT:-/dev/ttyACM0}
       MUJOCO_GL: osmesa
       DISPLAY: ${DISPLAY}

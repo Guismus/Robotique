@@ -80,7 +80,7 @@ class DriverNode(rclpy.node.Node):
     def _connect_arm(self, port: str = DEFAULT_PORT) -> SO101Sim | SO101Follower:
         """Creates and connects the backend chosen by use_sim (provided)."""
         if self._use_sim:
-            # scene : 'tek5' (phase 1, un cube + le bac) ou 'stack' (phase 2, 3 cubes + le socle)
+            # scene : 'tek5' (phase 1, un cube + le bac) ou 'stack' (pile : 3 cubes + le socle)
             scene = self.declare_parameter('scene', 'tek5').value
             robot = SO101Sim(scene_path=ASSETS_DIR / f'scene_{scene}.xml',
                              seed=self.declare_parameter('seed', 1).value)

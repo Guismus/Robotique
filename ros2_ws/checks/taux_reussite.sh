@@ -5,8 +5,8 @@
 #
 # Usage, depuis le dossier docker :
 #   bash ../ros2_ws/checks/taux_reussite.sh 1 20              # phase 1 : cube -> bac
-#   MODE=stack bash ../ros2_ws/checks/taux_reussite.sh 1 10   # phase 2 : pile de 3 cubes
-# Resultat : ros2_ws/checks/taux_reussite.txt (phase 1) ou taux_reussite_stack.txt (phase 2)
+#   MODE=stack bash ../ros2_ws/checks/taux_reussite.sh 1 10   # pile de 3 cubes
+# Resultat : ros2_ws/checks/taux_reussite.txt (phase 1) ou taux_reussite_stack.txt (pile)
 set -u
 FIRST=${1:-1}
 LAST=${2:-20}

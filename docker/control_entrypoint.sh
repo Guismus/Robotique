@@ -25,7 +25,7 @@ for i in 0 1 2 3; do
   [ -e /dev/ttyUSB$i ] || mknod /dev/ttyUSB$i c 188 $i 2>/dev/null && chmod 666 /dev/ttyUSB$i 2>/dev/null || true
 done
 
-# MODE=pick (phase 1 : cube -> bac) ou MODE=stack (phase 2 : empiler 3 cubes sur le socle)
+# MODE=pick (phase 1 : cube -> bac) ou MODE=stack (pile de 3 cubes sur le socle, pour le vrai bras)
 if [ "${MODE:-pick}" = stack ]; then SCENE=stack; STACK=3; else SCENE=tek5; STACK=0; fi
 launch so101_driver driver.launch.py "use_sim:=${USE_SIM:-true}" "port:=${REAL_ROBOT_PORT:-/dev/ttyACM0}" "seed:=${SIM_SEED:-1}" "scene:=$SCENE"
 launch so101_brain brain.launch.py "stack:=$STACK"

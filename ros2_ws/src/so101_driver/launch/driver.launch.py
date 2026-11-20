@@ -16,7 +16,7 @@ def generate_launch_description():
         DeclareLaunchArgument("use_sim", default_value="true",
                               description="Simulated backend or real robot"),
         DeclareLaunchArgument("seed", default_value="1", description="Position aleatoire de la simulation"),
-        DeclareLaunchArgument("scene", default_value="tek5", description="tek5 (phase 1) ou stack (phase 2, 3 cubes)"),
+        DeclareLaunchArgument("scene", default_value="tek5", description="tek5 (phase 1) ou stack (pile de 3 cubes)"),
         DeclareLaunchArgument("port", default_value="/dev/ttyACM0",  #  Use the following command to find the robot port:
                               # sudo udevadm monitor --subsystem-match=tty --property | grep --line-buffered -E "(DEVNAME=|ACTION=)"
                               description="Serial port of the real SO-ARM101"),

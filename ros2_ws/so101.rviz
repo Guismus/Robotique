@@ -166,8 +166,6 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        bac:
-          Value: true
         base_link:
           Value: true
         camera:
@@ -184,6 +182,8 @@ Visualization Manager:
           Value: false
         shoulder_link:
           Value: false
+        socle:
+          Value: true
         upper_arm_link:
           Value: false
         world:
@@ -198,8 +198,6 @@ Visualization Manager:
       Tree:
         world:
           base_link:
-            bac:
-              {}
             camera:
               {}
             cube:
@@ -213,6 +211,8 @@ Visualization Manager:
                         {}
                       moving_jaw_so101_v1_link:
                         {}
+            socle:
+              {}
       Update Interval: 0
       Value: true
   Enabled: true
@@ -249,10 +249,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.779999852180481
+      Pitch: 0.7149999141693115
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.5299973487854
+      Yaw: 5.264997482299805
     Saved: ~
 Window Geometry:
   Displays:
@@ -272,5 +272,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1471
-  X: 323
-  Y: -32
+  X: 238
+  Y: -31

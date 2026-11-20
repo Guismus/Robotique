@@ -59,11 +59,11 @@ class PerceptionNode(Node):
         self.k = self.transform = None
         # 'aruco' : la camera se calibre avec les marqueurs ; 'sim' : pose donnee par la simulation.
         self.mode = self.declare_parameter('calibration', 'aruco').value
-        # 'pick' (phase 1) : bac de 5 cm de haut ; 'stack' (phase 2) : socle plat de 2 mm.
+        # 'pick' (phase 1) : bac de 5 cm de haut ; 'stack' (pile de 3 cubes) : socle plat de 2 mm.
         stack = self.declare_parameter('mode', 'pick').value == 'stack'
         self.box_height = 0.002 if stack else 0.025
         # Reperes TF publies pour RViz, accroches a base_link : 'camera' (pose trouvee par la calibration,
-        # fixe) puis 'cube' et 'bac' (ou 'socle' en phase 2), mis a jour a chaque image.
+        # fixe) puis 'cube' et 'bac' (ou 'socle' pour la pile), mis a jour a chaque image.
         self.frames = {'object': 'cube', 'drop_box': 'socle' if stack else 'bac'}
         self.tf = TransformBroadcaster(self)
         self.static_tf = StaticTransformBroadcaster(self)
@@ -163,7 +163,7 @@ class PerceptionNode(Node):
         return t
 
     def publish_cubes(self, red, header, overlay, markers):
-        """Phase 2 : une position par tache rouge (un cube vaut ~290 pixels a 70 cm de la camera).
+        """Pile : une position par tache rouge (un cube vaut ~290 pixels a 70 cm de la camera).
         Le plus gros cube est aussi publie seul sur /object_position (phase 1), juste apres."""
         cubes = PoseArray()
         cubes.header.stamp, cubes.header.frame_id = header.stamp, 'base_link'

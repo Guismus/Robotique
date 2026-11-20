@@ -15,7 +15,7 @@ MAX_ESSAIS = 3  # nombre de cycles tentes avant d'abandonner
 # et le bac est a -79 deg : a +90 deg, le bras ne cache ni l'un ni l'autre.
 PAN_OBSERVATION = 1.57
 
-# Phase 2 (pile) : hauteurs en m. Le socle fait 2 mm, un cube 5 cm. Reglages mesures avec
+# Pile de 3 cubes : hauteurs en m. Le socle fait 2 mm, un cube 5 cm. Reglages mesures avec
 # checks/stack_probe.sh (verite terrain de la sim) : 3 etages reussis sur 7 graines / 10.
 SOCLE = 0.002
 CUBE = 0.05
@@ -86,7 +86,7 @@ class BrainNode(Node):
             response.message = 'Attendre les moteurs et le bac visibles.'
             return response
         self.attempt = 1
-        if self.stack:  # phase 2 : on regarde d'abord la table bras degage, puis on empile
+        if self.stack:  # pile : on regarde d'abord la table bras degage, puis on empile
             self.stack_xy = self.seen['drop_box'][0][:2].copy()  # le socle ne bouge pas : on le fige
             self.level, self.checking, self.total = 0, False, None
             self.observe()
@@ -139,7 +139,7 @@ class BrainNode(Node):
             return self.seen['object'][0]
         return None
 
-    # ------------------------------------------------------------ phase 2 : la pile
+    # ------------------------------------------------------------ pile de 3 cubes
 
     def objects(self, msg):
         if msg.header.frame_id == 'base_link':
