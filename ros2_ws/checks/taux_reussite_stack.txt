@@ -1,0 +1,6 @@
+graine 1 : ECHEC_PILE_ABIMEE : 3 cubes pres du socle, pile non reconnue 
+graine 2 : PILE_REUSSIE (3 cubes) 
+graine 3 : PILE_REUSSIE (3 cubes) 
+graine 4 : ECHEC_PILE_ABIMEE : 3 cubes pres du socle, pile non reconnue 
+graine 5 : PILE_REUSSIE (3 cubes) 
+TOTAL : 3 / 5 reussis

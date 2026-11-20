@@ -22,7 +22,7 @@ from lerobot.robots.so_follower import SO101Follower, SO101FollowerConfig
 from rclpy.executors import ExternalShutdownException
 from rclpy.qos import qos_profile_sensor_data
 from sensor_msgs.msg import JointState
-from so101_sim import SO101Sim
+from so101_sim import SO101Sim, ASSETS_DIR
 
 JOINT_NAMES = [
     "shoulder_pan",
@@ -80,7 +80,10 @@ class DriverNode(rclpy.node.Node):
     def _connect_arm(self, port: str = DEFAULT_PORT) -> SO101Sim | SO101Follower:
         """Creates and connects the backend chosen by use_sim (provided)."""
         if self._use_sim:
-            robot = SO101Sim(seed=self.declare_parameter('seed', 1).value)
+            # scene : 'tek5' (phase 1, un cube + le bac) ou 'stack' (phase 2, 3 cubes + le socle)
+            scene = self.declare_parameter('scene', 'tek5').value
+            robot = SO101Sim(scene_path=ASSETS_DIR / f'scene_{scene}.xml',
+                             seed=self.declare_parameter('seed', 1).value)
             robot.connect()
             return robot
 

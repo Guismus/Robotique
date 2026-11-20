@@ -126,6 +126,9 @@ class SO101Sim:
 
     def randomize_object(self, radius_range=(0.18, 0.30), angle_range_deg=(-50, 60)) -> None:
         """Moves pickup_object to a reachable position, with a random yaw."""
+        if "cube_2" in [self.model.body(i).name for i in range(self.model.nbody)]:
+            self._randomize_stack_cubes(radius_range)  # scene_stack.xml (phase 2)
+            return
         r = self._rng.uniform(*radius_range)
         a = np.radians(self._rng.uniform(*angle_range_deg))
         yaw = self._rng.uniform(0, np.pi / 2)  # the cube is invariant under 90° rotation
@@ -134,6 +137,27 @@ class SO101Sim:
         self.data.qpos[adr + 3 : adr + 7] = [np.cos(yaw / 2), 0, 0, np.sin(yaw / 2)]
         self.data.qvel[:] = 0
         # let the object settle on the ground (physics settling)
+        for _ in range(200):
+            mujoco.mj_step(self.model, self.data)
+
+    def _randomize_stack_cubes(self, radius_range) -> None:
+        """Phase 2 : place les 3 cubes au hasard, a 9 cm minimum les uns des autres
+        et a 12 cm minimum du socle de la pile (sinon la camera les confondrait)."""
+        base = self.data.body("drop_box").xpos[:2]
+        placed = []
+        for name in ["pickup_object", "cube_2", "cube_3"]:
+            while True:
+                r = self._rng.uniform(*radius_range)
+                a = np.radians(self._rng.uniform(-30, 60))
+                xy = np.array([r * np.cos(a), r * np.sin(a)])
+                if np.linalg.norm(xy - base) > 0.12 and all(np.linalg.norm(xy - p) > 0.09 for p in placed):
+                    break
+            placed.append(xy)
+            yaw = self._rng.uniform(0, np.pi / 2)
+            adr = self.model.joint(name + "_free").qposadr[0]
+            self.data.qpos[adr : adr + 3] = [xy[0], xy[1], 0.03]
+            self.data.qpos[adr + 3 : adr + 7] = [np.cos(yaw / 2), 0, 0, np.sin(yaw / 2)]
+        self.data.qvel[:] = 0
         for _ in range(200):
             mujoco.mj_step(self.model, self.data)
 

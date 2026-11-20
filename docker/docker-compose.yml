@@ -27,6 +27,8 @@ services:
       <<: *ros-env
       USE_SIM: ${USE_SIM:-true}
       SIM_SEED: ${SIM_SEED:-1}
+      PYTHONPATH: /opt/so101/sim   # la sim du depot (montee) passe avant la copie installee dans l image
+      MODE: ${MODE:-pick}          # pick = phase 1 (cube -> bac), stack = phase 2 (3 cubes empiles)
       REAL_ROBOT_PORT: ${REAL_ROBOT_PORT:-/dev/ttyACM0}
       MUJOCO_GL: osmesa
       DISPLAY: ${DISPLAY}
@@ -68,14 +70,16 @@ services:
       context: ..
       dockerfile: docker/Dockerfile.perception
     init: true
-    environment: *ros-env
+    environment:
+      <<: *ros-env
+      MODE: ${MODE:-pick}
     volumes:
       - ../ros2_ws:/ros2_ws
     networks: [rosnet]
     command: >
       bash -lc "source /opt/ros/jazzy/setup.bash &&
       until [ -f /ros2_ws/install/setup.bash ] && [ -f /ros2_ws/install/so101_perception/lib/so101_perception/perception ]; do sleep 1; done &&
-      source /ros2_ws/install/setup.bash && ros2 run so101_perception perception"
+      source /ros2_ws/install/setup.bash && ros2 run so101_perception perception --ros-args -p mode:=$${MODE}"
 
 networks:
   rosnet:

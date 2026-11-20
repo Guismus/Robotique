@@ -8,7 +8,7 @@ from rclpy.qos import qos_profile_sensor_data
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image, CameraInfo
 from std_msgs.msg import Float64MultiArray
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, PoseArray, Pose, PointStamped
 from visualization_msgs.msg import Marker, MarkerArray
 
 # Affichage de chaque objet : (texte, couleur BGR sur l'image, taille du pave RViz en m, couleur RGBA RViz)
@@ -48,6 +48,12 @@ class PerceptionNode(Node):
         self.k = self.transform = None
         # 'aruco' : la camera se calibre avec les marqueurs ; 'sim' : pose donnee par la simulation.
         self.mode = self.declare_parameter('calibration', 'aruco').value
+        # 'pick' (phase 1) : bac de 5 cm de haut ; 'stack' (phase 2) : socle plat de 2 mm.
+        self.box_height = 0.002 if self.declare_parameter('mode', 'pick').value == 'stack' else 0.025
+        self.cubes_pub = self.create_publisher(PoseArray, '/objects_positions', 10)  # tous les cubes vus
+        # Position de la camera trouvee par la calibration : le cerveau en a besoin pour savoir
+        # ou doit apparaitre le sommet de la pile vu d'en haut (effet de perspective).
+        self.camera_pub = self.create_publisher(PointStamped, '/perception/camera_position', 1)
         self.sim_transform = None  # pose donnee par la sim, gardee pour mesurer l'erreur de l'ArUco
         self.rvec = self.tvec = None  # pose monde -> camera trouvee par solvePnP
         params = cv2.aruco.DetectorParameters()
@@ -90,7 +96,8 @@ class PerceptionNode(Node):
         mask_msg = self.bridge.cv2_to_imgmsg(red, 'mono8')
         mask_msg.header = msg.header
         self.mask_pub.publish(mask_msg)
-        for ident, (name, mask, height) in enumerate([('object', red, 0.025), ('drop_box', brown, 0.025)]):
+        self.publish_cubes(red, msg.header, overlay, markers)
+        for ident, (name, mask, height) in enumerate([('object', red, 0.025), ('drop_box', brown, self.box_height)]):
             contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
             if not contours:
                 continue  # Aucun faux point (0, 0, 0) si le cube disparait.
@@ -118,6 +125,31 @@ class PerceptionNode(Node):
         self.overlay_pub.publish(overlay_msg)
         if markers.markers:
             self.marker_pub.publish(markers)
+
+    def publish_cubes(self, red, header, overlay, markers):
+        """Phase 2 : une position par tache rouge (un cube vaut ~290 pixels a 70 cm de la camera).
+        Le plus gros cube est aussi publie seul sur /object_position (phase 1), juste apres."""
+        cubes = PoseArray()
+        cubes.header.stamp, cubes.header.frame_id = header.stamp, 'base_link'
+        contours, _ = cv2.findContours(red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        for contour in contours:
+            m = cv2.moments(contour)
+            if m['m00'] < 80:  # petites taches = bruit, pas un cube
+                continue
+            point = project_pixel(m['m10']/m['m00'], m['m01']/m['m00'], 0.025, self.k, self.transform)
+            if point is None or not np.isfinite(point).all():
+                continue
+            pose = Pose()
+            pose.position.x, pose.position.y, pose.position.z = map(float, point)
+            pose.orientation.w = 1.
+            cubes.poses.append(pose)
+            self.draw(overlay, 'object', contour, point)
+            stamped = PoseStamped(header=cubes.header, pose=pose)
+            markers.markers.append(self.marker(stamped, 'object', 10 + len(cubes.poses)))  # ids 11, 12, 13...
+        self.cubes_pub.publish(cubes)
+        camera = PointStamped(header=cubes.header)
+        camera.point.x, camera.point.y, camera.point.z = map(float, self.transform[:3, 3])
+        self.camera_pub.publish(camera)
 
     def calibrate(self, frame):
         """Trouve ou est la camera grace aux marqueurs ArUco dont on connait la position sur la table."""
