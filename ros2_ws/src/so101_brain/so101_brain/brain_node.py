@@ -10,7 +10,7 @@ from std_srvs.srv import Trigger
 from scipy.spatial.transform import Rotation
 from .kinematics import Kinematics, NAMES
 
-MAX_ESSAIS = 3  # nombre de cycles tentes avant d'abandonner
+MAX_ESSAIS = 3
 # Rotation de la base pour degager la vue camera (+90 deg). Le cube apparait entre -50 et +60 deg
 # et le bac est a -79 deg : a +90 deg, le bras ne cache ni l'un ni l'autre.
 PAN_OBSERVATION = 1.57
@@ -67,7 +67,7 @@ class BrainNode(Node):
             return response
         self.attempt = 1
         if 'object' not in self.seen or time.monotonic() - self.seen['object'][1] > 1:
-            self.observe()  # le bras cache peut-etre le cube : on le deplace pour regarder
+            self.observe()
             response.success = True
             response.message = 'Cube cache : le bras se degage pour regarder.'
             return response
@@ -81,15 +81,13 @@ class BrainNode(Node):
         return response
 
     def observe(self):
-        """Tourne la base de 90 deg (pince a ~22 cm de haut) pour liberer la vue de la camera."""
         q = self.q.copy()
-        q[0] = PAN_OBSERVATION  # q[0] = shoulder_pan, les autres articulations ne bougent pas
+        q[0] = PAN_OBSERVATION
         self.steps = [('DEGAGEMENT', q, 100.)]
         self.index = 0
         self.goal = None
 
     def plan(self):
-        """Calcule les angles de toutes les etapes a partir des positions vues par la camera."""
         obj = self.seen['object'][0].copy()
         box = self.seen['drop_box'][0].copy()
         above = obj.copy(); above[2] = 0.08
@@ -98,7 +96,7 @@ class BrainNode(Node):
         high = self.kin.solve(above, self.q)
         low = self.kin.solve(obj, high)
         destination = self.kin.solve(drop, high)
-        self.pickup, self.box = obj, box  # retenus pour la verification par la camera
+        self.pickup, self.box = obj, box
         self.steps = [('APPROCHE', high, 100.), ('DESCENTE', low, 100.),
                       ('SAISIE', low, 0.), ('LEVAGE', high, 0.),
                       ('TRANSPORT', destination, 0.), ('DEPOT', destination, 100.),
@@ -107,7 +105,6 @@ class BrainNode(Node):
         self.goal = None
 
     def fresh_cube(self):
-        """Derniere position du cube vue il y a moins de 0,5 s, sinon None."""
         if 'object' in self.seen and time.monotonic() - self.seen['object'][1] < 0.5:
             return self.seen['object'][0]
         return None
@@ -115,16 +112,16 @@ class BrainNode(Node):
     def verify(self):
         """Boucle fermee : la camera confirme l'etape avant de continuer."""
         cube = self.fresh_cube()
-        if self.state == 'TRANSPORT':  # pince au-dessus du bac
+        if self.state == 'TRANSPORT':
             if cube is not None and np.linalg.norm(cube[:2] - self.pickup[:2]) < 0.03:
                 return self.retry('SAISIE_RATEE')  # cube encore a moins de 3 cm de sa place de depart
-        elif self.state == 'RETRAIT':  # fin du cycle
+        elif self.state == 'RETRAIT':
             if cube is not None and np.linalg.norm(cube[:2] - self.box[:2]) < 0.04:
                 self.steps, self.state = [], 'CYCLE_REUSSI'  # a moins de 4 cm du centre du bac
                 self.get_logger().info(f'CYCLE_REUSSI (essai {self.attempt}/{MAX_ESSAIS})')
                 return False
             return self.retry('PAS_DANS_LE_BAC')
-        elif self.state == 'DEGAGEMENT':  # bras tourne : la camera voit-elle le cube maintenant ?
+        elif self.state == 'DEGAGEMENT':
             if cube is None:
                 self.steps, self.state = [], 'ECHEC_CUBE_INVISIBLE'
                 self.get_logger().warn('ECHEC_CUBE_INVISIBLE : cube toujours pas vu apres degagement')
@@ -134,20 +131,19 @@ class BrainNode(Node):
             except ValueError:
                 self.steps, self.state = [], 'ECHEC_HORS_PORTEE'
             return False
-        return True  # les autres etapes : on continue
+        return True
 
     def retry(self, raison):
-        """Relance un cycle complet depuis la nouvelle position du cube, 3 essais maximum."""
         self.get_logger().warn(f'{raison} (essai {self.attempt}/{MAX_ESSAIS})')
         if self.attempt >= MAX_ESSAIS:
-            self.steps, self.state = [], 'ECHEC_' + raison  # on abandonne proprement
+            self.steps, self.state = [], 'ECHEC_' + raison
             return False
         self.attempt += 1
         if self.fresh_cube() is None:
-            self.observe()  # cube cache par le bras : se degager d'abord, puis replanifier
+            self.observe()
             return False
         try:
-            self.plan()  # nouveau plan vers la position ou la camera voit le cube maintenant
+            self.plan()
         except ValueError:
             self.steps, self.state = [], 'ECHEC_HORS_PORTEE'
         return False
@@ -182,7 +178,7 @@ class BrainNode(Node):
         reached = np.max(np.abs(self.q - self.goal)) < 0.04
         if reached and now - self.started > 2.:
             if not self.verify():
-                return  # cycle relance ou termine par la verification camera
+                return
             self.index += 1
             self.goal = None
             if self.index == len(self.steps):
