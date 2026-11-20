@@ -165,33 +165,45 @@ Visualization Manager:
       Filter (whitelist): ""
       Frame Timeout: 15
       Frames:
-        All Enabled: true
+        All Enabled: false
+        bac:
+          Value: true
         base_link:
+          Value: true
+        camera:
+          Value: true
+        cube:
           Value: true
         gripper_frame_link:
           Value: true
         gripper_link:
-          Value: true
+          Value: false
         lower_arm_link:
-          Value: true
+          Value: false
         moving_jaw_so101_v1_link:
-          Value: true
+          Value: false
         shoulder_link:
-          Value: true
+          Value: false
         upper_arm_link:
-          Value: true
+          Value: false
         world:
-          Value: true
+          Value: false
         wrist_link:
-          Value: true
-      Marker Scale: 0.5
+          Value: false
+      Marker Scale: 0.30000001192092896
       Name: TF
       Show Arrows: true
       Show Axes: true
-      Show Names: false
+      Show Names: true
       Tree:
         world:
           base_link:
+            bac:
+              {}
+            camera:
+              {}
+            cube:
+              {}
             shoulder_link:
               upper_arm_link:
                 lower_arm_link:
@@ -237,20 +249,20 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.9349998235702515
+      Pitch: 0.779999852180481
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.984999656677246
+      Yaw: 4.5299973487854
     Saved: ~
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 999
+  Height: 933
   Hide Left Dock: false
   Hide Right Dock: false
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000002000000000000034d00000283fc0200000005fb0000001200530065006c0065006300740069006f006e00000001080000005c0000005c00fffffffb0000000a0049006d0061006700650100000149000001bc0000001600fffffffb0000001e0054006f006f006c002000500072006f0070006500720074006900650073000000025f000000e00000005c00fffffffb0000000a005600690065007700730200000250000001310000034d000000f6fb0000000800540069006d0065010000030b000000c10000003700ffffff000000020000077400000108fc0100000002fb000000100044006900730070006c0061007900730100000000000007740000015600fffffffb0000000a0049006d0061006700650000000000000007740000000000000000000004210000028300000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000002000000000000034d00000241fc0200000005fb0000001200530065006c0065006300740069006f006e00000001080000005c0000005c00fffffffb0000000a0049006d00610067006501000001490000018e0000001600fffffffb0000001e0054006f006f006c002000500072006f0070006500720074006900650073000000025f000000e00000005c00fffffffb0000000a005600690065007700730200000250000001310000034d000000f6fb0000000800540069006d006501000002dd000000ad0000003700ffffff00000002000005bf00000108fc0100000002fb000000100044006900730070006c0061007900730100000000000005bf0000015600fffffffb0000000a0049006d00610067006500000000000000077400000000000000000000026c0000024100000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -259,6 +271,6 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-  Width: 1908
-  X: 0
-  Y: 0
+  Width: 1471
+  X: 323
+  Y: -32

@@ -8,7 +8,8 @@ from rclpy.qos import qos_profile_sensor_data
 from cv_bridge import CvBridge
 from sensor_msgs.msg import Image, CameraInfo
 from std_msgs.msg import Float64MultiArray
-from geometry_msgs.msg import PoseStamped, PoseArray, Pose, PointStamped
+from geometry_msgs.msg import PoseStamped, PoseArray, Pose, PointStamped, TransformStamped
+from tf2_ros import TransformBroadcaster, StaticTransformBroadcaster
 from visualization_msgs.msg import Marker, MarkerArray
 
 # Affichage de chaque objet : (texte, couleur BGR sur l'image, taille du pave RViz en m, couleur RGBA RViz)
@@ -32,6 +33,16 @@ def marker_corners(ident):
             [cx + h, cy - h, MARKER_Z], [cx - h, cy - h, MARKER_Z]]
 
 
+def quaternion(r):
+    """Matrice de rotation 3x3 -> quaternion (x, y, z, w), le format des TF.
+    Ex. identite -> (0, 0, 0, 1) ; demi-tour autour de z -> (0, 0, 1, 0)."""
+    w = np.sqrt(max(0., 1. + r[0, 0] + r[1, 1] + r[2, 2])) / 2
+    x = np.copysign(np.sqrt(max(0., 1. + r[0, 0] - r[1, 1] - r[2, 2])) / 2, r[2, 1] - r[1, 2])
+    y = np.copysign(np.sqrt(max(0., 1. - r[0, 0] + r[1, 1] - r[2, 2])) / 2, r[0, 2] - r[2, 0])
+    z = np.copysign(np.sqrt(max(0., 1. - r[0, 0] - r[1, 1] + r[2, 2])) / 2, r[1, 0] - r[0, 1])
+    return x, y, z, w
+
+
 def project_pixel(u, v, height, k, transform):
     """On suit le rayon du pixel jusqu'a la hauteur choisie, en metres."""
     ray = transform[:3, :3] @ np.linalg.solve(k, [u, v, 1.])
@@ -49,7 +60,14 @@ class PerceptionNode(Node):
         # 'aruco' : la camera se calibre avec les marqueurs ; 'sim' : pose donnee par la simulation.
         self.mode = self.declare_parameter('calibration', 'aruco').value
         # 'pick' (phase 1) : bac de 5 cm de haut ; 'stack' (phase 2) : socle plat de 2 mm.
-        self.box_height = 0.002 if self.declare_parameter('mode', 'pick').value == 'stack' else 0.025
+        stack = self.declare_parameter('mode', 'pick').value == 'stack'
+        self.box_height = 0.002 if stack else 0.025
+        # Reperes TF publies pour RViz, accroches a base_link : 'camera' (pose trouvee par la calibration,
+        # fixe) puis 'cube' et 'bac' (ou 'socle' en phase 2), mis a jour a chaque image.
+        self.frames = {'object': 'cube', 'drop_box': 'socle' if stack else 'bac'}
+        self.tf = TransformBroadcaster(self)
+        self.static_tf = StaticTransformBroadcaster(self)
+        self.camera_tf_sent = False
         self.cubes_pub = self.create_publisher(PoseArray, '/objects_positions', 10)  # tous les cubes vus
         # Position de la camera trouvee par la calibration : le cerveau en a besoin pour savoir
         # ou doit apparaitre le sommet de la pile vu d'en haut (effet de perspective).
@@ -87,6 +105,10 @@ class PerceptionNode(Node):
             if self.mode == 'aruco':
                 self.calibrate(frame)
             return
+        if not self.camera_tf_sent:  # une seule fois : la camera ne bouge pas
+            self.static_tf.sendTransform(self.frame_tf(msg.header.stamp, 'camera', self.transform))
+            self.camera_tf_sent = True
+        frames = []
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         overlay = frame.copy()  # on dessine sur une copie, l'image d'origine reste intacte
         markers = MarkerArray()
@@ -116,6 +138,9 @@ class PerceptionNode(Node):
             self.position_pubs[name].publish(result)
             self.draw(overlay, name, contour, point)
             markers.markers.append(self.marker(result, name, ident))
+            pose = np.eye(4)
+            pose[:3, 3] = point  # repere pose sur l'objet, axes paralleles a base_link
+            frames.append(self.frame_tf(msg.header.stamp, self.frames[name], pose))
         if self.rvec is not None:  # contour bleu des marqueurs, recalcule avec la pose trouvee
             for i in MARKERS:
                 pts, _ = cv2.projectPoints(np.array(marker_corners(i), np.float32), self.rvec, self.tvec, self.k, None)
@@ -125,6 +150,17 @@ class PerceptionNode(Node):
         self.overlay_pub.publish(overlay_msg)
         if markers.markers:
             self.marker_pub.publish(markers)
+        if frames:
+            self.tf.sendTransform(frames)
+
+    def frame_tf(self, stamp, child, pose):
+        """Un repere TF 'child' dans base_link, a partir d'une matrice 4x4 (position + rotation)."""
+        t = TransformStamped()
+        t.header.stamp, t.header.frame_id, t.child_frame_id = stamp, 'base_link', child
+        t.transform.translation.x, t.transform.translation.y, t.transform.translation.z = map(float, pose[:3, 3])
+        q = t.transform.rotation
+        q.x, q.y, q.z, q.w = map(float, quaternion(pose[:3, :3]))
+        return t
 
     def publish_cubes(self, red, header, overlay, markers):
         """Phase 2 : une position par tache rouge (un cube vaut ~290 pixels a 70 cm de la camera).
