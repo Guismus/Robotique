@@ -21,12 +21,10 @@ class Vision(Node):
         self.bridge = CvBridge()
         self.k = self.t = None
         self.pub = self.create_publisher(String, "/bonus/vision_state", 1)
-        # Affichage seulement (video, RViz) : image annotee, cubes 3D et reperes TF.
         self.overlay_pub = self.create_publisher(Image, "/perception/overlay", 1)
         self.marker_pub = self.create_publisher(MarkerArray, "/perception/markers", 1)
         self.tf = TransformBroadcaster(self)
-        # Pour l'affichage : un emplacement vu rempli une fois reste rempli, meme cache ensuite
-        # par le cube pose au-dessus (la camera ne voit que le dessus de la pyramide).
+        # Un emplacement vu rempli le reste : le cube pose au-dessus le cache ensuite.
         self.seen_done = [False] * len(TARGETS)
         self.create_subscription(CameraInfo, "/external_cam/camera_info", self.info, 1)
         self.create_subscription(Float64MultiArray, "/external_cam/pose", self.pose, 1)
