@@ -1,4 +1,4 @@
-"""Affichage uniquement : modele du bras et image de la camera."""
+"""Affichage uniquement : modele du bras, image annotee, cubes vus et reperes TF."""
 
 from pathlib import Path
 from launch import LaunchDescription
@@ -22,7 +22,7 @@ def generate_launch_description():
             Node(
                 package="rviz2",
                 executable="rviz2",
-                arguments=["-d", "/project/ros2_ws/so101.rviz"],
+                arguments=["-d", "/project/bonus/classic/bonus.rviz"],
             ),
         ]
     )

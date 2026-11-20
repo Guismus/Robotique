@@ -7,6 +7,9 @@ from rclpy.node import Node
 from sensor_msgs.msg import Image, CameraInfo
 from std_msgs.msg import Float64MultiArray, String
 from cv_bridge import CvBridge
+from visualization_msgs.msg import MarkerArray
+from tf2_ros import TransformBroadcaster
+import display
 from vision import CubeVision
 from calibrated_planning import TARGETS
 
@@ -18,6 +21,13 @@ class Vision(Node):
         self.bridge = CvBridge()
         self.k = self.t = None
         self.pub = self.create_publisher(String, "/bonus/vision_state", 1)
+        # Affichage seulement (video, RViz) : image annotee, cubes 3D et reperes TF.
+        self.overlay_pub = self.create_publisher(Image, "/perception/overlay", 1)
+        self.marker_pub = self.create_publisher(MarkerArray, "/perception/markers", 1)
+        self.tf = TransformBroadcaster(self)
+        # Pour l'affichage : un emplacement vu rempli une fois reste rempli, meme cache ensuite
+        # par le cube pose au-dessus (la camera ne voit que le dessus de la pyramide).
+        self.seen_done = [False] * len(TARGETS)
         self.create_subscription(CameraInfo, "/external_cam/camera_info", self.info, 1)
         self.create_subscription(Float64MultiArray, "/external_cam/pose", self.pose, 1)
         self.create_subscription(Image, "/external_cam/image_raw", self.image, 1)
@@ -43,6 +53,14 @@ class Vision(Node):
         self.pub.publish(
             String(data=json.dumps({"cubes": cubes, "placements": checks}))
         )
+        stamp = msg.header.stamp
+        self.seen_done = [a or bool(b) for a, b in zip(self.seen_done, checks)]
+        image = self.bridge.cv2_to_imgmsg(
+            display.overlay(rgb, labels, cubes, TARGETS, self.seen_done, self.k, self.t), "bgr8")
+        image.header = msg.header
+        self.overlay_pub.publish(image)
+        self.marker_pub.publish(display.markers(stamp, cubes, TARGETS, self.seen_done))
+        self.tf.sendTransform(display.frames(stamp, cubes, self.t))
 
 
 def main():

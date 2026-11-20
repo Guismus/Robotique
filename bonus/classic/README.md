@@ -38,3 +38,15 @@ Les autres scripts sont des diagnostics conserves pour expliquer les corrections
 ## Limites
 
 Les positions sont aleatoires parmi douze cases, avec une petite variation. Les faces des cubes sont preparees dans le plan de prise ; les orientations arbitraires ne sont pas validees. Le banc physique peut essayer trois prises par destination. La version ROS s arrete a la premiere perte de prise. Aucun essai sur un bras reel n a ete effectue.
+
+## Affichage pour la video (branche bonus+)
+
+`display.py` ajoute, sans changer les decisions du cerveau :
+
+- `/perception/overlay` : image de la camera teintee par le reseau, contour de chaque cube trouve avec sa position,
+  emplacements de la pyramide (vert = cube vu pose) et compteur `pyramide : n/6 cubes poses` ;
+- `/perception/markers` : cubes vus en 3D et emplacements de la pyramide dans RViz ;
+- `/tf` : reperes `camera`, `cube_rouge_1`, `cube_vert_1`, `cube_bleu_1`...
+
+La configuration RViz `bonus.rviz` affiche le bras, l'image annotee, les cubes et les reperes TF.
+Un emplacement confirme une fois reste compte : la camera ne voit ensuite que le cube pose au-dessus.
